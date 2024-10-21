@@ -1,0 +1,16 @@
+.space {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 1.4s ease-in-out, opacity 1.4s ease-in-out;
+}

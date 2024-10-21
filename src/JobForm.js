@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './index.css';
+
 
 const JobForm = () => {
   const [jobTitle, setJobTitle] = useState('');
@@ -21,6 +23,7 @@ const JobForm = () => {
   };
 
   return (
+    <div className="central">
     <form onSubmit={handleSubmit}>
       <div>
         <label>Job Title:</label>
@@ -36,6 +39,7 @@ const JobForm = () => {
       </div>
       <button type="submit">Add Job</button>
     </form>
+    </div>
   );
 };
 
