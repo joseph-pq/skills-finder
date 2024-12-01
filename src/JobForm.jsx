@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import MuiCard from '@mui/material/Card';
 import axios from 'axios';
 import './index.css';
+import { JobsContext } from './JobsContext';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -56,22 +57,15 @@ const FormCardContainer = styled(Stack)(({ theme }) => ({
 
 
 const JobForm = () => {
+  const {addJob } = React.useContext(JobsContext);
   const [jobTitle, setJobTitle] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [skills, setSkills] = useState('');
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const skillsArray = skills.split('\n').filter(skill => skill.trim() !== '');
-    const payload = { jobTitle, companyName, skills: skillsArray };
-
-    try {
-      const response = await axios.post('http://localhost:4000/add-job', payload);
-      alert(response.data.message);
-    } catch (error) {
-      console.error('There was an error creating the job!', error);
-    }
+    addJob({ jobTitle, companyName, skills });
   };
 
   return (
@@ -120,10 +114,10 @@ const JobForm = () => {
           </FormControl>
           <FormControl>
             <FormLabel
-              htmlFor="skills"
-            >Skills (one per line)</FormLabel>
+              htmlFor="JobDescription"
+            >Job Description</FormLabel>
             <TextField
-              id="skills"
+              id="JobDescription"
               multiline
               value={skills}
               onChange={(e) => setSkills(e.target.value)}

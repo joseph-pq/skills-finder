@@ -21,6 +21,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import InsightsIcon from '@mui/icons-material/Insights';
 import WorkIcon from '@mui/icons-material/Work';
 import ListItemText from '@mui/material/ListItemText';
+import { JobsProvider } from './JobsContext';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -66,55 +67,57 @@ function App(props) {
 
 
   return (
-    <AppTheme {...props}>
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={[
-              {
-                mr: 2,
-              },
-              open && { display: 'none' },
-            ]}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Skills Finder
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <JobsProvider>
+      <AppTheme {...props}>
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={[
+                {
+                  mr: 2,
+                },
+                open && { display: 'none' },
+              ]}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Skills Finder
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
-      <Drawer
-        open={open}
-        variant="persistent"
-        anchor="left"
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <CustomListItem key_name='Setup' text='Setup' icon={<HomeIcon />} setCurrentView={setCurrentView} />
-          <CustomListItem key_name='Jobs' text='Jobs' icon={<WorkIcon />} setCurrentView={setCurrentView} />
-          <CustomListItem key_name='Skills' text='Skills' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
-        </List>
-      </Drawer>
+        <Drawer
+          open={open}
+          variant="persistent"
+          anchor="left"
+        >
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            <CustomListItem key_name='Setup' text='Setup' icon={<HomeIcon />} setCurrentView={setCurrentView} />
+            <CustomListItem key_name='Jobs' text='Jobs' icon={<WorkIcon />} setCurrentView={setCurrentView} />
+            <CustomListItem key_name='Skills' text='Skills' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
+          </List>
+        </Drawer>
 
-      <div className="App">
-        <Space>
-          {currentView === 'Setup' && <Box>Setup</Box>}
-          {currentView === 'Jobs' && <JobForm />}
-          {currentView === 'Skills' && <Box>Skills</Box>}
-        </Space>
-      </div>
-    </AppTheme>
+        <div className="App">
+          <Space>
+            {currentView === 'Setup' && <Box>Setup</Box>}
+            {currentView === 'Jobs' && <JobForm />}
+            {currentView === 'Skills' && <Box>Skills</Box>}
+          </Space>
+        </div>
+      </AppTheme>
+    </JobsProvider>
   );
 }
 
