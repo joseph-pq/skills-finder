@@ -23,6 +23,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import ListItemText from '@mui/material/ListItemText';
 import { JobsProvider } from './JobsContext';
 import { SetupSkillsFinder } from './SetupSkillsFinder';
+import { InsightsView } from './InsightsView';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -106,7 +107,7 @@ function App(props) {
           <List>
             <CustomListItem key_name='Setup' text='Setup' icon={<HomeIcon />} setCurrentView={setCurrentView} />
             <CustomListItem key_name='Jobs' text='Jobs' icon={<WorkIcon />} setCurrentView={setCurrentView} />
-            <CustomListItem key_name='Skills' text='Skills' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
+            <CustomListItem key_name='Insights' text='Insights' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
           </List>
         </Drawer>
 
@@ -114,7 +115,7 @@ function App(props) {
           <Space>
             {currentView === 'Setup' && <SetupSkillsFinder />}
             {currentView === 'Jobs' && <JobForm />}
-            {currentView === 'Skills' && <Box>Skills</Box>}
+            {currentView === 'Insights' && <InsightsView/>}
           </Space>
         </div>
       </AppTheme>
