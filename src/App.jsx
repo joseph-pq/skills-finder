@@ -22,6 +22,7 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import WorkIcon from '@mui/icons-material/Work';
 import ListItemText from '@mui/material/ListItemText';
 import { JobsProvider } from './JobsContext';
+import { SetupSkillsFinder } from './SetupSkillsFinder';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -111,7 +112,7 @@ function App(props) {
 
         <div className="App">
           <Space>
-            {currentView === 'Setup' && <Box>Setup</Box>}
+            {currentView === 'Setup' && <SetupSkillsFinder />}
             {currentView === 'Jobs' && <JobForm />}
             {currentView === 'Skills' && <Box>Skills</Box>}
           </Space>

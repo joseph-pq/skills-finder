@@ -11,6 +11,12 @@ function JobsProvider({children}) {
     loading: loadingJobs,
     error: jobsError,
   } = useLocalStorage('JOBS_V1', []);
+  const {
+    item: apiToken,
+    saveItem: saveApiToken,
+    loading: loadingApiToken,
+    error: apiTokenError,
+  } = useLocalStorage('JOBS_API_TOKEN_V1', []);
 
   const addJob = (newJob) => {
       const newJobs = [...jobs];
@@ -25,6 +31,10 @@ function JobsProvider({children}) {
       loadingJobs,
       jobsError,
       addJob,
+      apiToken,
+      saveApiToken,
+      loadingApiToken,
+      apiTokenError,
     }}>
       {children}
     </JobsContext.Provider>
@@ -33,4 +43,3 @@ function JobsProvider({children}) {
 
 
 export { JobsContext, JobsProvider };
-
