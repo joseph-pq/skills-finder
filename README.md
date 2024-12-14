@@ -8,11 +8,6 @@ insights from them.
 Start the server:
 
 ```bash
-node server/index.js
-```
-
-Run the GUI:
-
-```bash
-npm start
+yarn
+yarn start
 ```
