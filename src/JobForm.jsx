@@ -20,16 +20,16 @@ const JobForm = () => {
   const {addJob } = React.useContext(JobsContext);
   const [jobTitle, setJobTitle] = useState('');
   const [companyName, setCompanyName] = useState('');
-  const [skills, setSkills] = useState('');
+  const [description, setDescription] = useState('');
 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    addJob({ jobTitle, companyName, skills });
+    addJob({ jobTitle, companyName, description });
     // clear form
     setJobTitle('');
     setCompanyName('');
-    setSkills('');
+    setDescription('');
   };
 
   return (
@@ -83,10 +83,10 @@ const JobForm = () => {
             <TextField
               id="JobDescription"
               multiline
-              value={skills}
+              value={description}
               minRows={4}
               maxRows={6}
-              onChange={(e) => setSkills(e.target.value)}
+              onChange={(e) => setDescription(e.target.value)}
               sx={{ width: '100%' }}
               required
             />

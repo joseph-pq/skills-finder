@@ -1,21 +1,9 @@
 import styled from '@mui/material/styles/styled';
 import { JobsContext } from './JobsContext';
-import Button from '@mui/material/Button';
+import {Button, Box} from '@mui/material';
 import React from 'react';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
-
-// const rows = [
-//   { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-//   { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-//   { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-//   { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-//   { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-//   { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-//   { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-//   { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-//   { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-// ];
 
 const paginationModel = { page: 0, pageSize: 5 };
 
@@ -45,6 +33,25 @@ function DataView() {
   const apiRef = useGridApiRef();
   const rows = []
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+
+  // Parse jobs. if job has skills but no description, move skills content to description
+  // const newJobs = jobs.map((job) => {
+  //   if (job.skills && !job.description) {
+  //     return {
+  //       ...job,
+  //       description: job.skills,
+  //       skills: [],
+  //     };
+  //   }
+  //   return job;
+  // });
+  // saveJobs(newJobs);
+
+
+  const extractSkills = () => {
+  }
+
+
   const handleRemove = () => {
     const selectedIDs = new Set(rowSelectionModel);
     const newJobs = jobs.filter((job, index) => !selectedIDs.has(index));
@@ -57,7 +64,7 @@ function DataView() {
       id: i,
       Title: job.jobTitle,
       Company: job.companyName,
-      Skills: job.skills,
+      Description: job.description,
     });
   }
   const columns = [
@@ -73,8 +80,8 @@ function DataView() {
       width: 100,
     },
     {
-      field: "Skills",
-      headerName: "Skills",
+      field: "Description",
+      headerName: "Description",
       width: 400,
     },
   ]
@@ -93,7 +100,10 @@ function DataView() {
 
         sx={{ border: 0 }}
       />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
       <Button type="submit" variant="contained" onClick={handleRemove}>Remove</Button>
+      <Button type="submit" variant="contained" onClick={extractSkills}>Extract Skills</Button>
+      </Box>
     </CustomPaper>
   );
 }
