@@ -84,7 +84,10 @@ const JobForm = () => {
               id="JobDescription"
               multiline
               value={skills}
+              minRows={4}
+              maxRows={6}
               onChange={(e) => setSkills(e.target.value)}
+              sx={{ width: '100%' }}
               required
             />
           </FormControl>
