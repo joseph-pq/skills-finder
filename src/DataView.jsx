@@ -1,7 +1,8 @@
 import styled from '@mui/material/styles/styled';
 import { JobsContext } from './JobsContext';
+import Button from '@mui/material/Button';
 import React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 
 // const columns = [
@@ -58,9 +59,18 @@ const CustomPaper = styled(Paper)(({ theme }) => ({
 }));
 
 
+
 function DataView() {
-  const {jobs } = React.useContext(JobsContext);
+  const { jobs, saveJobs } = React.useContext(JobsContext);
+  const apiRef = useGridApiRef();
   const rows = []
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const handleRemove = () => {
+    const selectedIDs = new Set(rowSelectionModel);
+    const newJobs = jobs.filter((job, index) => !selectedIDs.has(index));
+    saveJobs(newJobs);
+    setRowSelectionModel([]);
+  }
   for (let i = 0; i < jobs.length; i++) {
     const job = jobs[i];
     rows.push({
@@ -71,7 +81,7 @@ function DataView() {
     });
   }
   const columns = [
-  { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'id', headerName: 'ID', width: 70 },
     {
       field: "Title",
       headerName: "Title",
@@ -96,11 +106,17 @@ function DataView() {
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
         checkboxSelection
+        onRowSelectionModelChange={(newSelection) => {
+          setRowSelectionModel(newSelection);
+        }}
+        rowSelectionModel={rowSelectionModel}
+
         sx={{ border: 0 }}
       />
+      <Button type="submit" variant="contained" onClick={handleRemove}>Remove</Button>
     </CustomPaper>
   );
 }
 
 
-export { DataView};
+export { DataView };
