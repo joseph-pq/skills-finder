@@ -26,6 +26,10 @@ const JobForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     addJob({ jobTitle, companyName, skills });
+    // clear form
+    setJobTitle('');
+    setCompanyName('');
+    setSkills('');
   };
 
   return (
