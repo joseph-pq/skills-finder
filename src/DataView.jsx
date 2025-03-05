@@ -1,9 +1,11 @@
 import styled from '@mui/material/styles/styled';
+import LinearProgress from '@mui/material/LinearProgress';
 import { JobsContext } from './JobsContext';
-import {Button, Box} from '@mui/material';
+import { Button, Box } from '@mui/material';
 import React from 'react';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const paginationModel = { page: 0, pageSize: 5 };
 
@@ -29,10 +31,11 @@ const CustomPaper = styled(Paper)(({ theme }) => ({
 
 
 function DataView() {
-  const { jobs, saveJobs } = React.useContext(JobsContext);
+  const { jobs, saveJobs, apiToken } = React.useContext(JobsContext);
   const apiRef = useGridApiRef();
   const rows = []
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const [showProgressBar, setShowProgressBar] = React.useState(false);
 
   // Parse jobs. if job has skills but no description, move skills content to description
   // const newJobs = jobs.map((job) => {
@@ -46,9 +49,39 @@ function DataView() {
   //   return job;
   // });
   // saveJobs(newJobs);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+  const extractSkills = async () => {
+    const genAI = new GoogleGenerativeAI(apiToken);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-  const extractSkills = () => {
+    const jobsCopy = [...jobs];
+    let updated = false;
+    setShowProgressBar(true);
+
+    for (let i = 0; i < jobs.length; i++) {
+      if (!jobs[i].skills || jobs[i].skills.length === 0) {
+        console.log("Skills not found");
+        const prompt = `Given the description:
+          """${jobs[i].description}"""
+          Extract the skills required for this job like LinkedIn would.
+          Return: skill elements separated by semicolons.
+        `;
+        const result = await model.generateContent(prompt);
+        await sleep(1000)
+        const skills_str = result.response.text();
+        const skills = skills_str.split(";");
+        jobsCopy[i].skills = skills;
+        updated = true;
+      } else {
+        console.log("Skills found");
+        console.log(jobs[i].skills);
+      }
+    }
+    setShowProgressBar(false);
+    if (updated) {
+      saveJobs(jobsCopy);
+    }
   }
 
 
@@ -57,14 +90,30 @@ function DataView() {
     const newJobs = jobs.filter((job, index) => !selectedIDs.has(index));
     saveJobs(newJobs);
     setRowSelectionModel([]);
+  };
+  const handleRemoveSkills = () => {
+    const selectedIDs = new Set(rowSelectionModel);
+    const newJobs = jobs.map((job, index) => {
+      if (selectedIDs.has(index)) {
+        return {
+          ...job,
+          skills: [],
+        };
+      }
+      return job;
+    });
+    saveJobs(newJobs);
   }
+
+
+
   for (let i = 0; i < jobs.length; i++) {
     const job = jobs[i];
     rows.push({
       id: i,
       Title: job.jobTitle,
       Company: job.companyName,
-      Description: job.description,
+      Skills: job.skills,
     });
   }
   const columns = [
@@ -80,13 +129,18 @@ function DataView() {
       width: 100,
     },
     {
-      field: "Description",
-      headerName: "Description",
+      field: "Skills",
+      headerName: "Skills",
       width: 400,
     },
   ]
   return (
     <CustomPaper>
+      {showProgressBar &&
+        <Box sx={{ width: '100%' }}>
+          <LinearProgress />
+        </Box>
+      }
       <DataGrid
         rows={rows}
         columns={columns}
@@ -101,8 +155,9 @@ function DataView() {
         sx={{ border: 0 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-      <Button type="submit" variant="contained" onClick={handleRemove}>Remove</Button>
-      <Button type="submit" variant="contained" onClick={extractSkills}>Extract Skills</Button>
+        <Button type="submit" variant="contained" onClick={handleRemove}>Remove</Button>
+        <Button type="submit" variant="contained" onClick={handleRemoveSkills}>Remove skills</Button>
+        <Button type="submit" variant="contained" onClick={extractSkills}>Extract Skills</Button>
       </Box>
     </CustomPaper>
   );
