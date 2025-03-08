@@ -28,7 +28,7 @@ export function InsightsView() {
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ my: 20 }}>
+      <Box sx={{ my: 10 }}>
         <DataGrid
           rows={rows}
           columns={COLUMNS}

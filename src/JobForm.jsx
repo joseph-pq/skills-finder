@@ -1,102 +1,90 @@
-import React, { useState } from 'react';
-import Button from '@mui/material/Button';
-import FormLabel from '@mui/material/FormLabel';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import { styled } from '@mui/material/styles';
-import MuiCard from '@mui/material/Card';
-import axios from 'axios';
-import './index.css';
+import React, { useState, useContext } from 'react';
+import { Button, FormLabel, TextField, Typography, FormControl, Box, Container } from '@mui/material';
 import { JobsContext } from './JobsContext';
-import { FormCardContainer } from './FormCardContainer';
 import { Card } from './Card';
 
-
 const JobForm = () => {
-  const {addJob } = React.useContext(JobsContext);
-  const [jobTitle, setJobTitle] = useState('');
-  const [companyName, setCompanyName] = useState('');
-  const [description, setDescription] = useState('');
+  const { addJob } = useContext(JobsContext);
+  const [formValues, setFormValues] = useState({
+    jobTitle: '',
+    companyName: '',
+    description: '',
+  });
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
+    const { jobTitle, companyName, description } = formValues;
     addJob({ jobTitle, companyName, description, skills: [] });
-    // clear form
-    setJobTitle('');
-    setCompanyName('');
-    setDescription('');
+
+    // Clear form values after submission
+    setFormValues({
+      jobTitle: '',
+      companyName: '',
+      description: '',
+    });
   };
 
   return (
-    <FormCardContainer direction="column" justifyContent="space-between">
+    <Container maxWidth="sm">
+      <Box sx={{ my: 10 }}>
+        <Card variant="outlined">
+          <Typography
+            component="h1"
+            variant="h4"
+            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+          >
+            Add a Job Posting
+          </Typography>
 
-      <Card variant="outlined">
-        <Typography
-          component="h1"
-          variant="h4"
-          sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-        >
-          Add a Job Posting
-        </Typography>
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          noValidate
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            gap: 2,
-          }}
-        >
-          <FormControl>
-            <FormLabel
-              htmlFor="jobTitle"
-            >Job Title</FormLabel>
-            <TextField
-              id="jobTitle"
-              value={jobTitle}
-              onChange={(e) => setJobTitle(e.target.value)}
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
+            <JobField
+              label="Job Title"
+              name="jobTitle"
+              value={formValues.jobTitle}
+              onChange={handleChange}
               required
             />
-          </FormControl>
-          <FormControl>
-            <FormLabel
-              htmlFor="companyName"
-            >Company Name</FormLabel>
-            <TextField
-              id="companyName"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+            <JobField
+              label="Company Name"
+              name="companyName"
+              value={formValues.companyName}
+              onChange={handleChange}
               required
             />
-          </FormControl>
-          <FormControl>
-            <FormLabel
-              htmlFor="JobDescription"
-            >Job Description</FormLabel>
-            <TextField
-              id="JobDescription"
+            <JobField
+              label="Job Description"
+              name="description"
+              value={formValues.description}
+              onChange={handleChange}
               multiline
-              value={description}
               minRows={4}
               maxRows={6}
-              onChange={(e) => setDescription(e.target.value)}
-              sx={{ width: '100%' }}
               required
             />
-          </FormControl>
-          <Button type="submit" variant="contained">Add Job</Button>
-        </Box>
-      </Card>
-    </FormCardContainer>
+            <Button type="submit" variant="contained">
+              Add Job
+            </Button>
+          </Box>
+        </Card>
+      </Box>
+    </Container>
   );
 };
 
-export default JobForm;
+// Extracted reusable field component
+const JobField = ({ label, ...props }) => (
+  <FormControl>
+    <FormLabel htmlFor={props.name}>{label}</FormLabel>
+    <TextField id={props.name} {...props} />
+  </FormControl>
+);
 
+export default JobForm;
