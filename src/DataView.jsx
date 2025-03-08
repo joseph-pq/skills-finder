@@ -62,10 +62,14 @@ function DataView() {
     for (let i = 0; i < jobs.length; i++) {
       if (!jobs[i].skills || jobs[i].skills.length === 0) {
         console.log("Skills not found");
-        const prompt = `Given the description:
-          """${jobs[i].description}"""
-          Extract the skills required for this job like LinkedIn would.
-          Return: skill elements separated by semicolons.
+        const prompt = `
+        You are an expert linkedin bot that can extract skills from job descriptions like a pro
+        to later identify trending skills in the job market.
+        From the given job description. Extract required LinkedIn skills as list with no plurals, only lower case, the simplest form to write the skill, avoid compound terms, do not use acronyms. Do not write generic skills. Extract skills based on context. These skills are job skills.
+
+        """${jobs[i].description}"""
+
+        Return only the extracted skills in a single line separated by semicolons.
         `;
         const result = await model.generateContent(prompt);
         await sleep(1000)
@@ -103,6 +107,17 @@ function DataView() {
       return job;
     });
     saveJobs(newJobs);
+  }
+  const importJobs = () => {
+  }
+  const exportJobs = () => {
+    // export jobs in a json file
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(jobs)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    element.download = "jobs.json";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
   }
 
 
@@ -157,6 +172,8 @@ function DataView() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
         <Button type="submit" variant="contained" onClick={handleRemove}>Remove</Button>
         <Button type="submit" variant="contained" onClick={handleRemoveSkills}>Remove skills</Button>
+        <Button type="submit" variant="contained" onClick={exportJobs}>Export Jobs</Button>
+        <Button type="submit" variant="contained" onClick={importJobs}>Import Jobs</Button>
         <Button type="submit" variant="contained" onClick={extractSkills}>Extract Skills</Button>
       </Box>
     </CustomPaper>
