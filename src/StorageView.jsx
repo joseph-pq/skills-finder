@@ -1,12 +1,16 @@
 import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
-import { DataView } from './DataView';
+import { JobsView } from './DataView';
+import { SkillsView } from './SkillsView';
 
 function StorageView() {
+  const [currentView, setCurrentView] = React.useState("jobs");
+  const [jobsToUpdate, setJobsToUpdate] = React.useState([]);
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 5 }}>
-        <DataView />
+        {currentView === "jobs" && <JobsView setCurrentView={setCurrentView} setJobsToUpdate={setJobsToUpdate}/>}
+        {currentView === "skills" && <SkillsView setCurrentView={setCurrentView} jobsToUpdate={jobsToUpdate}/>}
       </Box>
     </Container>
   )

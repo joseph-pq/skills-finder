@@ -9,7 +9,7 @@ import { CustomPaper } from './components/CustomPaper';
 const paginationModel = { page: 0, pageSize: 5 };
 
 
-function DataView() {
+function JobsView( {setCurrentView, setJobsToUpdate} ) {
   const { jobs, saveJobs, apiToken } = React.useContext(JobsContext);
   const apiRef = useGridApiRef();
   const rows = []
@@ -98,7 +98,10 @@ function DataView() {
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   }
-
+  const editSkills = () => {
+    setJobsToUpdate(rowSelectionModel);
+    setCurrentView("skills");
+  }
 
 
   for (let i = 0; i < jobs.length; i++) {
@@ -154,10 +157,11 @@ function DataView() {
         <Button type="submit" variant="outlined" onClick={exportJobs}>Export Jobs</Button>
         <Button type="submit" variant="outlined" onClick={importJobs}>Import Jobs</Button>
         <Button type="submit" variant="outlined" onClick={extractSkills}>Extract Skills</Button>
+        <Button type="submit" variant="outlined" onClick={editSkills}>Edit Skills</Button>
       </Box>
     </CustomPaper>
   );
 }
 
 
-export { DataView };
+export { JobsView };
