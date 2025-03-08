@@ -18,12 +18,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import HomeIcon from '@mui/icons-material/Home';
+import StorageIcon from '@mui/icons-material/Storage';
 import InsightsIcon from '@mui/icons-material/Insights';
 import WorkIcon from '@mui/icons-material/Work';
 import ListItemText from '@mui/material/ListItemText';
 import { JobsProvider } from './JobsContext';
 import { SetupSkillsFinder } from './SetupSkillsFinder';
 import { InsightsView } from './InsightsView';
+import { StorageView } from './StorageView';
 
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -107,6 +109,7 @@ function App(props) {
           <List>
             <CustomListItem key_name='Setup' text='Setup' icon={<HomeIcon />} setCurrentView={setCurrentView} />
             <CustomListItem key_name='Jobs' text='Jobs' icon={<WorkIcon />} setCurrentView={setCurrentView} />
+            <CustomListItem key_name='Data' text='data' icon={<StorageIcon />} setCurrentView={setCurrentView} />
             <CustomListItem key_name='Insights' text='Insights' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
           </List>
         </Drawer>
@@ -116,6 +119,7 @@ function App(props) {
             {currentView === 'Setup' && <SetupSkillsFinder />}
             {currentView === 'Jobs' && <JobForm />}
             {currentView === 'Insights' && <InsightsView/>}
+            {currentView === 'Data' && <StorageView/>}
           </Space>
         </div>
       </AppTheme>

@@ -1,11 +1,15 @@
 import React from 'react';
+import { JobsContext } from './JobsContext';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import Typography from '@mui/material/Typography';
+import { CustomPaper } from './components/CustomPaper';
 import { styled } from '@mui/material/styles';
 import { Stack } from '@mui/material';
-import {DataView} from './DataView';
-import {Card} from './Card';
+import { DataView } from './DataView';
+import { Card } from './Card';
+const paginationModel = { page: 0, pageSize: 5 };
 
-const InsightsViewContainer  = styled(Stack)(({ theme }) => ({
+const InsightsViewContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
@@ -27,14 +31,62 @@ const InsightsViewContainer  = styled(Stack)(({ theme }) => ({
     }),
   },
 }));
+const columns = [
+  // { field: 'id', headerName: 'ID', width: 70 },
+  { field: 'skills', headerName: 'Skills', width: 130 },
+  { field: 'count', headerName: 'Count', width: 130 },
+];
+const rows = [
+  { id: 1, skills: 'JavaScript', count: 100 },
+  { id: 2, skills: 'Python', count: 200 },
+]
+
 
 function InsightsView() {
+  const { jobs } = React.useContext(JobsContext);
+  const [rows, setRows] = React.useState([]);
+  React.useEffect(() => {
+    const skills = new Map();
+    for (let i = 0; i < jobs.length; i++) {
+      for (let j = 0; j < jobs[i].skills.length; j++) {
+        const skill = jobs[i].skills[j].trim();
+        if (skills.has(skill)) {
+          skills.set(skill, skills.get(skill) + 1);
+        } else {
+          skills.set(skill, 1);
+        }
+      }
+    }
+    const newRows = [];
+    let id = 0;
+    skills.forEach((value, key) => {
+      newRows.push({ id: id++, skills: key, count: value });
+    });
+    setRows(newRows);
+
+  }, [jobs]);
   return (
     <InsightsViewContainer
       direction="column"
       justifyContent="space-between"
     >
-        <DataView/>
+      <CustomPaper>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          sortModel={[
+            {
+              field: 'count',
+              sort: 'desc', // or 'asc' for ascending
+            },
+          ]}
+          sx={{ border: 0 }}
+          initialState={{ pagination: { paginationModel } }}
+
+          pageSizeOptions={[5, 10]}
+        >
+        </DataGrid>
+      </CustomPaper>
     </InsightsViewContainer>
   )
 }
