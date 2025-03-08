@@ -8,27 +8,14 @@ import { CustomPaper } from './components/CustomPaper';
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-
-function JobsView( {setCurrentView, setJobsToUpdate} ) {
+function JobsView({ setCurrentView, setJobsToUpdate }) {
   const { jobs, saveJobs, apiToken } = React.useContext(JobsContext);
   const apiRef = useGridApiRef();
-  const rows = []
+  const rows = [];
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [showProgressBar, setShowProgressBar] = React.useState(false);
 
-  // Parse jobs. if job has skills but no description, move skills content to description
-  // const newJobs = jobs.map((job) => {
-  //   if (job.skills && !job.description) {
-  //     return {
-  //       ...job,
-  //       description: job.skills,
-  //       skills: [],
-  //     };
-  //   }
-  //   return job;
-  // });
-  // saveJobs(newJobs);
-  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   const extractSkills = async () => {
     const genAI = new GoogleGenerativeAI(apiToken);
@@ -44,14 +31,14 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
         const prompt = `
         You are an expert linkedin bot that can extract skills from job descriptions like a pro
         to later identify trending skills in the job market.
-        From the given job description. Extract required LinkedIn skills as list with no plurals, only lower case, the simplest form to write the skill, avoid compound terms, do not use acronyms. Do not write generic skills. Extract skills based on context. These skills are job skills.
+        From the given job description. Extract required LinkedIn skills as list with no plurals, only lower case, the simplest form to write the skill, avoid compound terms, do not use acronyms. Do not write generic skills. Extract skills based on context.
 
         """${jobs[i].description}"""
 
         Return only the extracted skills in a single line separated by semicolons.
         `;
         const result = await model.generateContent(prompt);
-        await sleep(1000)
+        await sleep(1000);
         const skills_str = result.response.text();
         const skills = skills_str.split(";");
         jobsCopy[i].skills = skills;
@@ -65,8 +52,7 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
     if (updated) {
       saveJobs(jobsCopy);
     }
-  }
-
+  };
 
   const handleRemove = () => {
     const selectedIDs = new Set(rowSelectionModel);
@@ -74,6 +60,7 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
     saveJobs(newJobs);
     setRowSelectionModel([]);
   };
+
   const handleRemoveSkills = () => {
     const selectedIDs = new Set(rowSelectionModel);
     const newJobs = jobs.map((job, index) => {
@@ -86,23 +73,43 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
       return job;
     });
     saveJobs(newJobs);
-  }
+  };
+
   const importJobs = () => {
-  }
+    // Create file input to select JSON file
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const importedJobs = JSON.parse(reader.result);
+          saveJobs(importedJobs); // Save imported jobs into the context
+        } catch (error) {
+          console.error('Error parsing JSON file:', error);
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click(); // Trigger the file input
+  };
+
   const exportJobs = () => {
-    // export jobs in a json file
+    // Export jobs in a JSON file
     const element = document.createElement("a");
     const file = new Blob([JSON.stringify(jobs)], { type: 'application/json' });
     element.href = URL.createObjectURL(file);
     element.download = "jobs.json";
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
-  }
+  };
+
   const editSkills = () => {
     setJobsToUpdate(rowSelectionModel);
     setCurrentView("skills");
-  }
-
+  };
 
   for (let i = 0; i < jobs.length; i++) {
     const job = jobs[i];
@@ -113,8 +120,8 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
       Skills: job.skills,
     });
   }
+
   const columns = [
-    // { field: 'id', headerName: 'ID', width: 70 },
     {
       field: "Title",
       headerName: "Title",
@@ -130,14 +137,15 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
       headerName: "Skills",
       width: 400,
     },
-  ]
+  ];
+
   return (
     <CustomPaper>
-      {showProgressBar &&
+      {showProgressBar && (
         <Box sx={{ width: '100%' }}>
           <LinearProgress />
         </Box>
-      }
+      )}
       <DataGrid
         rows={rows}
         columns={columns}
@@ -148,7 +156,6 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
           setRowSelectionModel(newSelection);
         }}
         rowSelectionModel={rowSelectionModel}
-
         sx={{ border: 0 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
@@ -162,6 +169,5 @@ function JobsView( {setCurrentView, setJobsToUpdate} ) {
     </CustomPaper>
   );
 }
-
 
 export { JobsView };
