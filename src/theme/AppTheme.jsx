@@ -26,6 +26,24 @@ const themeOptions = createTheme({
       main: '#ffa726',
     },
   },
+  components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          border: '3px solid #D9D137', // Uses primary color for border
+          borderRadius: '8px', // Optional: rounded corners
+        },
+      },
+    },
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          border: '3px solid #D9D137', // Border for tables
+          borderRadius: '8px', // Optional
+        },
+      },
+    },
+  },
 });
 
 export default themeOptions;

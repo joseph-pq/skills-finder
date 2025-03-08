@@ -1,9 +1,6 @@
 import React from 'react';
 import Drawer from '@mui/material/Drawer';
-import { ThemeProvider } from '@mui/material/styles';
-import { styled, useTheme } from '@mui/material/styles';
-import { createTheme } from '@mui/material/styles';
-import themeOptions from "./theme/AppTheme";
+import { styled } from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -73,57 +70,55 @@ function App(props) {
 
   return (
     <JobsProvider>
-      <ThemeProvider theme={themeOptions}>
-        <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={[
-                {
-                  mr: 2,
-                },
-                open && { display: 'none' },
-              ]}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              Skills Finder
-            </Typography>
-          </Toolbar>
-        </AppBar>
+      <AppBar position="fixed" open={open}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={[
+              {
+                mr: 2,
+              },
+              open && { display: 'none' },
+            ]}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
+            Skills Finder
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-        <Drawer
-          open={open}
-          variant="persistent"
-          anchor="left"
-        >
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
+      <Drawer
+        open={open}
+        variant="persistent"
+        anchor="left"
+      >
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
             {/*   {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />} */}
-            </IconButton>
-          </DrawerHeader>
-          <Divider />
-          <List>
-            <CustomListItem key_name='Setup' text='Setup' icon={<HomeIcon />} setCurrentView={setCurrentView} />
-            <CustomListItem key_name='Jobs' text='Jobs' icon={<WorkIcon />} setCurrentView={setCurrentView} />
-            <CustomListItem key_name='Data' text='data' icon={<StorageIcon />} setCurrentView={setCurrentView} />
-            <CustomListItem key_name='Insights' text='Insights' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
-          </List>
-        </Drawer>
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
+          <CustomListItem key_name='Setup' text='Setup' icon={<HomeIcon />} setCurrentView={setCurrentView} />
+          <CustomListItem key_name='Jobs' text='Jobs' icon={<WorkIcon />} setCurrentView={setCurrentView} />
+          <CustomListItem key_name='Data' text='data' icon={<StorageIcon />} setCurrentView={setCurrentView} />
+          <CustomListItem key_name='Insights' text='Insights' icon={<InsightsIcon />} setCurrentView={setCurrentView} />
+        </List>
+      </Drawer>
 
-        <div className="App">
-          <Space>
-            {currentView === 'Setup' && <SetupSkillsFinder />}
-            {currentView === 'Jobs' && <JobForm />}
-            {currentView === 'Insights' && <InsightsView/>}
-            {currentView === 'Data' && <StorageView/>}
-          </Space>
-        </div>
-      </ThemeProvider>
+      <div className="App">
+        <Space>
+          {currentView === 'Setup' && <SetupSkillsFinder />}
+          {currentView === 'Jobs' && <JobForm />}
+          {currentView === 'Insights' && <InsightsView />}
+          {currentView === 'Data' && <StorageView />}
+        </Space>
+      </div>
     </JobsProvider>
   );
 }
