@@ -33,13 +33,9 @@ const InsightsViewContainer = styled(Stack)(({ theme }) => ({
 }));
 const columns = [
   // { field: 'id', headerName: 'ID', width: 70 },
-  { field: 'skills', headerName: 'Skills', width: 130 },
+  { field: 'skills', headerName: 'Skills', width: 230 },
   { field: 'count', headerName: 'Count', width: 130 },
 ];
-const rows = [
-  { id: 1, skills: 'JavaScript', count: 100 },
-  { id: 2, skills: 'Python', count: 200 },
-]
 
 
 function InsightsView() {

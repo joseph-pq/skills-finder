@@ -1,6 +1,9 @@
 import React from 'react';
 import Drawer from '@mui/material/Drawer';
+import { ThemeProvider } from '@mui/material/styles';
 import { styled, useTheme } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
+import themeOptions from "./theme/AppTheme";
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -10,7 +13,6 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Typography from '@mui/material/Typography';
 import JobForm from './JobForm';
-import AppTheme from './theme/AppTheme';
 import Space from './Space.js';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
@@ -57,7 +59,6 @@ function CustomListItem(props) {
 
 
 function App(props) {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [currentView, setCurrentView] = React.useState('Setup');
 
@@ -72,7 +73,7 @@ function App(props) {
 
   return (
     <JobsProvider>
-      <AppTheme {...props}>
+      <ThemeProvider theme={themeOptions}>
         <AppBar position="fixed" open={open}>
           <Toolbar>
             <IconButton
@@ -102,7 +103,7 @@ function App(props) {
         >
           <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
-              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {/*   {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />} */}
             </IconButton>
           </DrawerHeader>
           <Divider />
@@ -122,7 +123,7 @@ function App(props) {
             {currentView === 'Data' && <StorageView/>}
           </Space>
         </div>
-      </AppTheme>
+      </ThemeProvider>
     </JobsProvider>
   );
 }

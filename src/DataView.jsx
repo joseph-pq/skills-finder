@@ -149,11 +149,11 @@ function DataView() {
         sx={{ border: 0 }}
       />
       <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <Button type="submit" variant="contained" onClick={handleRemove}>Remove</Button>
-        <Button type="submit" variant="contained" onClick={handleRemoveSkills}>Remove skills</Button>
-        <Button type="submit" variant="contained" onClick={exportJobs}>Export Jobs</Button>
-        <Button type="submit" variant="contained" onClick={importJobs}>Import Jobs</Button>
-        <Button type="submit" variant="contained" onClick={extractSkills}>Extract Skills</Button>
+        <Button type="submit" variant="outlined" onClick={handleRemove}>Remove</Button>
+        <Button type="submit" variant="outlined" onClick={handleRemoveSkills}>Remove skills</Button>
+        <Button type="submit" variant="outlined" onClick={exportJobs}>Export Jobs</Button>
+        <Button type="submit" variant="outlined" onClick={importJobs}>Import Jobs</Button>
+        <Button type="submit" variant="outlined" onClick={extractSkills}>Extract Skills</Button>
       </Box>
     </CustomPaper>
   );
