@@ -25,6 +25,10 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   // Utility function to pause execution for a given time
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  const goToGroups = () => {
+    setCurrentView("groups");
+  }
+
   /**
    * Extracts skills from job descriptions using Google Generative AI.
    * Updates the job entries with the extracted skills.
@@ -204,6 +208,9 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
         </Button>
         <Button type="submit" variant="outlined" onClick={extractSkills}>
           Extract Skills
+        </Button>
+        <Button type="submit" variant="outlined" onClick={goToGroups}>
+          Groups
         </Button>
       </Box>
     </CustomPaper>
