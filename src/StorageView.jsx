@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
-import { JobsView } from './DataView';
+import { JobsView } from './JobsView';
 import { SkillsView } from './SkillsView';
 
 function StorageView() {
