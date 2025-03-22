@@ -1,13 +1,18 @@
-import LinearProgress from '@mui/material/LinearProgress';
-import { JobsContext } from './JobsContext';
-import { Button, Box } from '@mui/material';
 import React from 'react';
+import { Button, Box } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { JobsContext } from './JobsContext';
 import { CustomPaper } from './components/CustomPaper';
 
+// Initial pagination model for the data grid
 const paginationModel = { page: 0, pageSize: 5 };
 
+/**
+ * JobsView component displays a list of jobs and provides functionalities
+ * to manage job entries and extract skills from job descriptions.
+ */
 function JobsView({ setCurrentView, setJobsToUpdate }) {
   const { jobs, saveJobs, apiToken } = React.useContext(JobsContext);
   const apiRef = useGridApiRef();
@@ -15,8 +20,13 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [showProgressBar, setShowProgressBar] = React.useState(false);
 
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  // Utility function to pause execution for a given time
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+  /**
+   * Extracts skills from job descriptions using Google Generative AI.
+   * Updates the job entries with the extracted skills.
+   */
   const extractSkills = async () => {
     const genAI = new GoogleGenerativeAI(apiToken);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
@@ -39,8 +49,8 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
         `;
         const result = await model.generateContent(prompt);
         await sleep(1000);
-        const skills_str = result.response.text();
-        const skills = skills_str.split(";");
+        const skillsStr = result.response.text();
+        const skills = skillsStr.split(";");
         jobsCopy[i].skills = skills;
         updated = true;
       } else {
@@ -54,6 +64,9 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
     }
   };
 
+  /**
+   * Removes selected job entries from the list.
+   */
   const handleRemove = () => {
     const selectedIDs = new Set(rowSelectionModel);
     const newJobs = jobs.filter((job, index) => !selectedIDs.has(index));
@@ -61,6 +74,9 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
     setRowSelectionModel([]);
   };
 
+  /**
+   * Removes skills from selected job entries.
+   */
   const handleRemoveSkills = () => {
     const selectedIDs = new Set(rowSelectionModel);
     const newJobs = jobs.map((job, index) => {
@@ -75,8 +91,10 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
     saveJobs(newJobs);
   };
 
+  /**
+   * Imports job entries from a JSON file.
+   */
   const importJobs = () => {
-    // Create file input to select JSON file
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
@@ -86,31 +104,37 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
       reader.onload = () => {
         try {
           const importedJobs = JSON.parse(reader.result);
-          saveJobs(importedJobs); // Save imported jobs into the context
+          saveJobs(importedJobs);
         } catch (error) {
           console.error('Error parsing JSON file:', error);
         }
       };
       reader.readAsText(file);
     };
-    input.click(); // Trigger the file input
+    input.click();
   };
 
+  /**
+   * Exports current job entries to a JSON file.
+   */
   const exportJobs = () => {
-    // Export jobs in a JSON file
     const element = document.createElement("a");
     const file = new Blob([JSON.stringify(jobs)], { type: 'application/json' });
     element.href = URL.createObjectURL(file);
     element.download = "jobs.json";
-    document.body.appendChild(element); // Required for this to work in FireFox
+    document.body.appendChild(element);
     element.click();
   };
 
+  /**
+   * Sets the current view to edit skills for selected job entries.
+   */
   const editSkills = () => {
     setJobsToUpdate(rowSelectionModel);
     setCurrentView("skills");
   };
 
+  // Prepare rows for the data grid
   for (let i = 0; i < jobs.length; i++) {
     const job = jobs[i];
     rows.push({
@@ -121,6 +145,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
     });
   }
 
+  // Define columns for the data grid
   const columns = [
     {
       field: "Title",
