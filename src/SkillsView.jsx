@@ -1,24 +1,33 @@
-import React from 'react';
-import { Container, Box, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import { JobsContext } from './JobsContext';
-import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
-import { CustomPaper } from './components/CustomPaper';
+import React from "react";
+import {
+  Container,
+  Box,
+  Typography,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Card,
+  CardContent,
+} from "@mui/material";
+import { JobsContext } from "./JobsContext";
+import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
+import { CustomPaper } from "./components/CustomPaper";
 
-const paginationModel = { page: 0, pageSize: 5 };
+const paginationModel = { page: 0, pageSize: 8 };
 
-const COLS = [
-  { field: 'skill', headerName: 'Skill', width: 200 },
-  { field: 'job', headerName: 'Job Title', width: 400 },
-  { field: 'company', headerName: 'Company', width: 300 },
-];
+const COLS = [{ field: "skill", headerName: "Skill", width: 200 }];
 
-function SkillsView({ jobsToUpdate, setCurrentView }) {
+function SkillsView({ jobToUpdate, setCurrentView }) {
   const { jobs, saveJobs } = React.useContext(JobsContext);
+  const [hoveredSkill, setHoveredSkill] = React.useState(null);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const apiRef = useGridApiRef();
   const [rows, setRows] = React.useState([]);
   const [openDialog, setOpenDialog] = React.useState(false); // To manage dialog visibility
-  const [selectedSkill, setSelectedSkill] = React.useState(''); // To store selected skill
+  const [selectedSkill, setSelectedSkill] = React.useState(""); // To store selected skill
   const [selectedSkillIdx, setSelectedSkillIdx] = React.useState(null); // To store selected skill index
   const [selectedJobIdx, setSelectedJobIdx] = React.useState(null); // To store job index
 
@@ -36,7 +45,7 @@ function SkillsView({ jobsToUpdate, setCurrentView }) {
 
   const handleRemove = () => {
     const newJobs = jobs.map((job, jobIdx) => {
-      if (jobsToUpdate.includes(jobIdx)) {
+      if (jobIdx === jobToUpdate) {
         const skillsIdxToRemove = rowSelectionModel
           .filter((rowIndex) => rows[rowIndex].job_idx === jobIdx)
           .map((rowIndex) => rows[rowIndex].skill_idx);
@@ -44,7 +53,9 @@ function SkillsView({ jobsToUpdate, setCurrentView }) {
         console.log(skillsIdxToRemove);
         return {
           ...job,
-          skills: job.skills.filter((_, idx) => !skillsIdxToRemove.includes(idx)),
+          skills: job.skills.filter(
+            (_, idx) => !skillsIdxToRemove.includes(idx),
+          ),
         };
       }
       return job;
@@ -79,43 +90,87 @@ function SkillsView({ jobsToUpdate, setCurrentView }) {
 
   React.useEffect(() => {
     const newRows = [];
-    let k = 0;
-    for (let i = 0; i < jobsToUpdate.length; i++) {
-      const job = jobs[jobsToUpdate[i]];
-      for (let j = 0; j < job.skills.length; j++) {
-        newRows.push({
-          id: k,
-          skill: job.skills[j],
-          skill_idx: j,
-          job: job.jobTitle,
-          job_idx: jobsToUpdate[i],
-          company: job.companyName,
-        });
-        k++;
-      }
+    const job = jobs[jobToUpdate];
+    for (let j = 0; j < job.skills.length; j++) {
+      newRows.push({
+        id: j,
+        skill: job.skills[j],
+        skill_idx: j,
+        job: job.jobTitle,
+        job_idx: jobToUpdate,
+        company: job.companyName,
+      });
     }
     setRows(newRows);
   }, [jobs]);
 
+  const jobDescription = jobs[jobToUpdate]?.description || "";
+
+  const getHighlightedDescription = () => {
+    if (!hoveredSkill) return jobDescription;
+
+    const regex = new RegExp(`\\b${hoveredSkill}\\b`, "gi");
+    const parts = jobDescription.split(regex);
+
+    return parts.map((part, index) => (
+      <React.Fragment key={index}>
+        {part}
+        {index < parts.length - 1 && (
+          <span style={{ backgroundColor: "red" }}>{hoveredSkill}</span>
+        )}
+      </React.Fragment>
+    ));
+  };
+
   return (
     <CustomPaper>
-      <Typography variant="h2" component="h2" align="center">Skills</Typography>
-      <DataGrid
-        rows={rows}
-        columns={COLS}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0 }}
-        onRowSelectionModelChange={(newSelection) => {
-          setRowSelectionModel(newSelection);
-        }}
-        rowSelectionModel={rowSelectionModel}
-      />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <Button type="submit" variant="outlined" onClick={handleBack}>Back </Button>
-        <Button type="submit" variant="outlined" onClick={handleEdit}>Edit</Button>
-        <Button type="submit" variant="outlined" onClick={handleRemove}>Remove</Button>
+      <Typography variant="h2" component="h2" align="center">
+        Skills
+      </Typography>
+      <Box
+        sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}
+      >
+        <Card sx={{ flex: 1, marginLeft: 2 }}>
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              Job Description
+            </Typography>
+            <Typography variant="body2" component="p">
+              {getHighlightedDescription()}
+            </Typography>
+          </CardContent>
+        </Card>
+        <Box sx={{ flex: 1 }}>
+          <DataGrid
+            rows={rows}
+            columns={COLS}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[10, 20]}
+            sx={{ border: 0 }}
+            rowSelectionModel={rowSelectionModel}
+            onRowClick={(params) => {
+              if (hoveredSkill === params.row.skill) setHoveredSkill(null);
+              else setHoveredSkill(params.row.skill);
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Button type="submit" variant="outlined" onClick={handleBack}>
+              Back{" "}
+            </Button>
+            <Button type="submit" variant="outlined" onClick={handleEdit}>
+              Edit
+            </Button>
+            <Button type="submit" variant="outlined" onClick={handleRemove}>
+              Remove
+            </Button>
+          </Box>
+        </Box>
       </Box>
 
       {/* Dialog to edit the skill */}

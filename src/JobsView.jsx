@@ -1,10 +1,13 @@
-import React from 'react';
-import { Button, Box } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
-import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import React from "react";
+import { Button, Box } from "@mui/material";
+import LinearProgress from "@mui/material/LinearProgress";
+import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { JobsContext } from './JobsContext';
-import { CustomPaper } from './components/CustomPaper';
+import { JobsContext } from "./JobsContext";
+import { CustomPaper } from "./components/CustomPaper";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 
 // Initial pagination model for the data grid
 const paginationModel = { page: 0, pageSize: 5 };
@@ -16,7 +19,6 @@ const paginationModel = { page: 0, pageSize: 5 };
 function JobsView({ setCurrentView, setJobsToUpdate }) {
   const { jobs, saveJobs, apiToken } = React.useContext(JobsContext);
   const apiRef = useGridApiRef();
-  const rows = [];
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [showProgressBar, setShowProgressBar] = React.useState(false);
 
@@ -67,20 +69,17 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   /**
    * Removes selected job entries from the list.
    */
-  const handleRemove = () => {
-    const selectedIDs = new Set(rowSelectionModel);
-    const newJobs = jobs.filter((job, index) => !selectedIDs.has(index));
+  const removeJob = (id) => {
+    const newJobs = jobs.filter((_, index) => index !== id);
     saveJobs(newJobs);
-    setRowSelectionModel([]);
   };
 
   /**
-   * Removes skills from selected job entries.
+   * Removes skills from a specific job entry.
    */
-  const handleRemoveSkills = () => {
-    const selectedIDs = new Set(rowSelectionModel);
+  const clearJob = (id) => {
     const newJobs = jobs.map((job, index) => {
-      if (selectedIDs.has(index)) {
+      if (index === id) {
         return {
           ...job,
           skills: [],
@@ -95,9 +94,9 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
    * Imports job entries from a JSON file.
    */
   const importJobs = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
     input.onchange = (event) => {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -106,7 +105,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
           const importedJobs = JSON.parse(reader.result);
           saveJobs(importedJobs);
         } catch (error) {
-          console.error('Error parsing JSON file:', error);
+          console.error("Error parsing JSON file:", error);
         }
       };
       reader.readAsText(file);
@@ -119,7 +118,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
    */
   const exportJobs = () => {
     const element = document.createElement("a");
-    const file = new Blob([JSON.stringify(jobs)], { type: 'application/json' });
+    const file = new Blob([JSON.stringify(jobs)], { type: "application/json" });
     element.href = URL.createObjectURL(file);
     element.download = "jobs.json";
     document.body.appendChild(element);
@@ -129,45 +128,61 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   /**
    * Sets the current view to edit skills for selected job entries.
    */
-  const editSkills = () => {
-    setJobsToUpdate(rowSelectionModel);
+  const openSkill = (jobIdx) => {
+    setJobsToUpdate(jobIdx);
     setCurrentView("skills");
   };
 
   // Prepare rows for the data grid
-  for (let i = 0; i < jobs.length; i++) {
-    const job = jobs[i];
-    rows.push({
-      id: i,
-      Title: job.jobTitle,
-      Company: job.companyName,
-      Skills: job.skills,
-    });
-  }
+  const rows = jobs.map((job, index) => ({
+    id: index,
+    title: job.jobTitle,
+    company: job.companyName,
+    skills: job.skills,
+  }));
+  console.log(rows);
 
   // Define columns for the data grid
   const columns = [
     {
-      field: "Title",
+      field: "title",
       headerName: "Title",
       width: 450,
     },
     {
-      field: "Company",
+      field: "company",
       headerName: "Company",
       width: 100,
     },
     {
-      field: "Skills",
+      field: "skills",
       headerName: "Skills",
-      width: 400,
+      width: 150,
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 200,
+      renderCell: (params) => (
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button onClick={() => openSkill(params.id)}>
+            <OpenInNewIcon />
+          </Button>
+          <Button onClick={() => removeJob(params.id)}>
+            <DeleteOutlineIcon />
+          </Button>
+          <Button onClick={() => clearJob(params.id)}>
+            <CleaningServicesIcon />
+          </Button>
+        </Box>
+      ),
     },
   ];
 
   return (
     <CustomPaper>
       {showProgressBar && (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: "100%" }}>
           <LinearProgress />
         </Box>
       )}
@@ -176,20 +191,20 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
-        onRowSelectionModelChange={(newSelection) => {
-          setRowSelectionModel(newSelection);
-        }}
-        rowSelectionModel={rowSelectionModel}
         sx={{ border: 0 }}
       />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-        <Button type="submit" variant="outlined" onClick={handleRemove}>Remove</Button>
-        <Button type="submit" variant="outlined" onClick={handleRemoveSkills}>Remove skills</Button>
-        <Button type="submit" variant="outlined" onClick={exportJobs}>Export Jobs</Button>
-        <Button type="submit" variant="outlined" onClick={importJobs}>Import Jobs</Button>
-        <Button type="submit" variant="outlined" onClick={extractSkills}>Extract Skills</Button>
-        <Button type="submit" variant="outlined" onClick={editSkills}>Edit Skills</Button>
+      <Box
+        sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}
+      >
+        <Button type="submit" variant="outlined" onClick={exportJobs}>
+          Export Jobs
+        </Button>
+        <Button type="submit" variant="outlined" onClick={importJobs}>
+          Import Jobs
+        </Button>
+        <Button type="submit" variant="outlined" onClick={extractSkills}>
+          Extract Skills
+        </Button>
       </Box>
     </CustomPaper>
   );

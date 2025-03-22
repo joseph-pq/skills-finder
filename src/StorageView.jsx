@@ -5,12 +5,12 @@ import { SkillsView } from './SkillsView';
 
 function StorageView() {
   const [currentView, setCurrentView] = React.useState("jobs");
-  const [jobsToUpdate, setJobsToUpdate] = React.useState([]);
+  const [jobToUpdate, setJobToUpdate] = React.useState(null);
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 5 }}>
-        {currentView === "jobs" && <JobsView setCurrentView={setCurrentView} setJobsToUpdate={setJobsToUpdate}/>}
-        {currentView === "skills" && <SkillsView setCurrentView={setCurrentView} jobsToUpdate={jobsToUpdate}/>}
+        {currentView === "jobs" && <JobsView setCurrentView={setCurrentView} setJobsToUpdate={setJobToUpdate}/>}
+        {currentView === "skills" && <SkillsView setCurrentView={setCurrentView} jobToUpdate={jobToUpdate}/>}
       </Box>
     </Container>
   )
