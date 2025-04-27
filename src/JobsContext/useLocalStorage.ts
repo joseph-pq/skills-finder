@@ -1,15 +1,27 @@
-import React from 'react';
+import { useState, useEffect } from "react";
 
-function useLocalStorage(itemName, initialValue) {
-  const [item, setItem] = React.useState(initialValue);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(false);
+type SetItemFunction<T> = (value: T) => void;
 
-  React.useEffect(() => {
+interface UseLocalStorageReturn<T> {
+  item: T;
+  saveItem: SetItemFunction<T>;
+  loading: boolean;
+  error: boolean;
+}
+
+function useLocalStorage<T>(
+  itemName: string,
+  initialValue: T,
+): UseLocalStorageReturn<T> {
+  const [item, setItem] = useState<T>(initialValue);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
+
+  useEffect(() => {
     try {
       const localStorageItem = localStorage.getItem(itemName);
 
-      let parsedItem;
+      let parsedItem: T;
 
       if (!localStorageItem) {
         localStorage.setItem(itemName, JSON.stringify(initialValue));
@@ -24,9 +36,9 @@ function useLocalStorage(itemName, initialValue) {
       setLoading(false);
       setError(true);
     }
-  }, []);
+  }, [itemName, initialValue]);
 
-  const saveItem = (newItem) => {
+  const saveItem = (newItem: T): void => {
     localStorage.setItem(itemName, JSON.stringify(newItem));
     setItem(newItem);
   };
@@ -41,7 +53,6 @@ function useLocalStorage(itemName, initialValue) {
 
 export { useLocalStorage };
 
-
 // localStorage.removeItem('JOBS_V1');
 
 // const defaultJobs = [
@@ -51,4 +62,3 @@ export { useLocalStorage };
 // ];
 
 // localStorage.setItem('JOBS_V1', JSON.stringify(defaultTodos));
-
