@@ -11,3 +11,9 @@ Start the server:
 yarn
 yarn start
 ```
+
+Deploy:
+
+```bash
+yarn deploy && yarn deploy
+```
