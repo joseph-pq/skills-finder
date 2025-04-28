@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Button, Box } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
-import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { JobsContext } from "./JobsContext";
 import { CustomPaper } from "./components/CustomPaper";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+
+// Define the shape of a job object
+interface Job {
+  jobTitle: string;
+  companyName: string;
+  description: string;
+  skills: string[];
+}
+
+// Define the props for the JobsView component
+interface JobsViewProps {
+  setCurrentView: (view: string) => void;
+  setJobsToUpdate: (jobIdx: number) => void;
+}
 
 // Initial pagination model for the data grid
 const paginationModel = { page: 0, pageSize: 5 };
@@ -16,18 +30,18 @@ const paginationModel = { page: 0, pageSize: 5 };
  * JobsView component displays a list of jobs and provides functionalities
  * to manage job entries and extract skills from job descriptions.
  */
-function JobsView({ setCurrentView, setJobsToUpdate }) {
-  const { jobs, saveJobs, apiToken } = React.useContext(JobsContext);
+function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
+  const { jobs, saveJobs, apiToken } = useContext(JobsContext);
   const apiRef = useGridApiRef();
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const [showProgressBar, setShowProgressBar] = React.useState(false);
+  const [rowSelectionModel, setRowSelectionModel] = useState<number[]>([]);
+  const [showProgressBar, setShowProgressBar] = useState<boolean>(false);
 
   // Utility function to pause execution for a given time
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const goToGroups = () => {
     setCurrentView("groups");
-  }
+  };
 
   /**
    * Extracts skills from job descriptions using Google Generative AI.
@@ -73,7 +87,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   /**
    * Removes selected job entries from the list.
    */
-  const removeJob = (id) => {
+  const removeJob = (id: number) => {
     const newJobs = jobs.filter((_, index) => index !== id);
     saveJobs(newJobs);
   };
@@ -81,7 +95,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   /**
    * Removes skills from a specific job entry.
    */
-  const clearJob = (id) => {
+  const clearJob = (id: number) => {
     const newJobs = jobs.map((job, index) => {
       if (index === id) {
         return {
@@ -101,18 +115,20 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
-    input.onchange = (event) => {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const importedJobs = JSON.parse(reader.result);
-          saveJobs(importedJobs);
-        } catch (error) {
-          console.error("Error parsing JSON file:", error);
-        }
-      };
-      reader.readAsText(file);
+    input.onchange = (event: Event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const importedJobs: Job[] = JSON.parse(reader.result as string);
+            saveJobs(importedJobs);
+          } catch (error) {
+            console.error("Error parsing JSON file:", error);
+          }
+        };
+        reader.readAsText(file);
+      }
     };
     input.click();
   };
@@ -132,7 +148,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   /**
    * Sets the current view to edit skills for selected job entries.
    */
-  const openSkill = (jobIdx) => {
+  const openSkill = (jobIdx: number) => {
     setJobsToUpdate(jobIdx);
     setCurrentView("skills");
   };
@@ -147,7 +163,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
   console.log(rows);
 
   // Define columns for the data grid
-  const columns = [
+  const columns: GridColDef[] = [
     {
       field: "title",
       headerName: "Title",
@@ -169,13 +185,13 @@ function JobsView({ setCurrentView, setJobsToUpdate }) {
       width: 200,
       renderCell: (params) => (
         <Box sx={{ display: "flex", gap: 1 }}>
-          <Button onClick={() => openSkill(params.id)}>
+          <Button onClick={() => openSkill(params.id as number)}>
             <OpenInNewIcon />
           </Button>
-          <Button onClick={() => removeJob(params.id)}>
+          <Button onClick={() => removeJob(params.id as number)}>
             <DeleteOutlineIcon />
           </Button>
-          <Button onClick={() => clearJob(params.id)}>
+          <Button onClick={() => clearJob(params.id as number)}>
             <CleaningServicesIcon />
           </Button>
         </Box>

@@ -11,8 +11,13 @@ import { SetupSkillsFinder } from './SetupSkillsFinder';
 import { InsightsView } from './InsightsView';
 import { StorageView } from './StorageView';
 
+interface TabItem {
+  label: string;
+  value: string;
+  component: JSX.Element;
+}
 
-const TABS = [
+const TABS: TabItem[] = [
   { label: 'Home', value: '1', component: <SetupSkillsFinder /> },
   { label: 'New Job', value: '2', component: <JobForm /> },
   { label: 'Current Jobs', value: '3', component: <StorageView /> },
@@ -20,9 +25,9 @@ const TABS = [
 ];
 
 function App() {
-  const [currentTab, setCurrentTab] = useState('1');
+  const [currentTab, setCurrentTab] = useState<string>('1');
 
-  const handleTabChange = (_, newValue) => setCurrentTab(newValue);
+  const handleTabChange = (_: React.SyntheticEvent, newValue: string) => setCurrentTab(newValue);
 
   return (
     <JobsProvider>
