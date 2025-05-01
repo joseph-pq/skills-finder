@@ -1,9 +1,9 @@
 import { Container, Box } from "@mui/material";
 import React from "react";
 
-import { GroupsView } from "@/groups-view";
-import { JobsView } from "@/jobs-view";
-import { SkillsView } from "@/skills-view";
+import { GroupsView } from "@/pages/storage-view/groups-view";
+import { JobsView } from "@/pages/storage-view/jobs-view";
+import { SkillsView } from "@/pages/storage-view/skills-view";
 import { StorageViewType } from "@/types";
 
 

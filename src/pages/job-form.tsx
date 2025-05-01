@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useState, useContext } from "react";
 
-import { Card } from "@/card";
+import { Card } from "@/components/card";
 import { JobsContext } from "@/jobs-context";
 
 const JobForm = () => {

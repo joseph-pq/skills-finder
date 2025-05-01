@@ -4,7 +4,7 @@ import React from "react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import App from "@/app.tsx";
+import App from "@/app/app.tsx";
 import themeOptions from "@/theme/app-theme";
 import "@/index.css";
 

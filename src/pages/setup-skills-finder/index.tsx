@@ -13,7 +13,7 @@ import {
 import { useContext } from "react";
 import React from "react";
 
-import { Card } from "@/card";
+import { Card } from "@/components/card";
 import { JobsContext } from "@/jobs-context";
 
 function SetupSkillsFinder() {
