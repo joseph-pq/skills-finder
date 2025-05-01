@@ -20,7 +20,7 @@ const PAGINATION_MODEL = { page: 0, pageSize: 10 };
 
 const getSkillsData = (jobs: Job[]) => {
   const skillsCount = jobs
-    .flatMap((job) => job.skills.map((skill: string) => skill.trim())) // Flatten skills array
+    .flatMap((job) => (job.skills || []).map((skill: string) => skill.trim())) // Flatten skills array, handle missing skills
     .reduce(
       (acc, skill) => acc.set(skill, (acc.get(skill) || 0) + 1),
       new Map(),
