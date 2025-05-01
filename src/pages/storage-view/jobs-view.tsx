@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -8,6 +7,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useContext, useState } from "react";
 
 import { CustomPaper } from "@/components/custom-paper";
+import { extractSkillsFromDescription } from "@/features/llm/api/extract-skills";
 import { JobsContext } from "@/jobs-context";
 import { Job, StorageViewType } from "@/types";
 
@@ -45,9 +45,6 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
    * Updates the job entries with the extracted skills.
    */
   const extractSkills = async () => {
-    const genAI = new GoogleGenerativeAI(apiToken);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
     const jobsCopy = [...jobs];
     let updated = false;
     setShowProgressBar(true);
@@ -55,26 +52,19 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
     for (let i = 0; i < jobs.length; i++) {
       if (!jobs[i].skills || jobs[i].skills.length === 0) {
         console.log("Skills not found");
-        const prompt = `
-        You are an expert linkedin bot that can extract skills from job descriptions like a pro
-        to later identify trending skills in the job market.
-        From the given job description. Extract required LinkedIn skills as list with no plurals, only lower case, the simplest form to write the skill, avoid compound terms, do not use acronyms. Do not write generic skills. Extract skills based on context.
-
-        """${jobs[i].description}"""
-
-        Return only the extracted skills in a single line separated by semicolons.
-        `;
-        const result = await model.generateContent(prompt);
-        await sleep(1000);
-        const skillsStr = result.response.text();
-        const skills = skillsStr.split(";");
+        const skills = await extractSkillsFromDescription(
+          jobs[i].description,
+          apiToken,
+        );
         jobsCopy[i].skills = skills;
         updated = true;
+        await sleep(1000);
       } else {
         console.log("Skills found");
         console.log(jobs[i].skills);
       }
     }
+
     setShowProgressBar(false);
     if (updated) {
       saveJobs(jobsCopy);
