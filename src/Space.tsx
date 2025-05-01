@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import './SpaceBackground.css';
+import React, { useState, useEffect } from "react";
+import "./SpaceBackground.css";
 
 const Star = ({ x, y }) => {
   return <div className="star" style={{ top: `${y}%`, left: `${x}%` }}></div>;
@@ -17,7 +17,7 @@ const generateStars = (numStars) => {
   return stars;
 };
 
-const Space = ({children}) => {
+const Space = ({ children }) => {
   const [stars, setStars] = useState([]);
 
   useEffect(() => {
@@ -25,11 +25,11 @@ const Space = ({children}) => {
   }, []);
 
   return (
-    <div className='space'>
+    <div className="space">
       {stars.map((star) => (
         <Star key={star.id} x={star.x} y={star.y} />
       ))}
-    {children}
+      {children}
     </div>
   );
 };

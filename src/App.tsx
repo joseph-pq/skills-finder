@@ -5,7 +5,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
-import SpaceBackground from './Space.js';
+import SpaceBackground from './Space';
 import JobForm from './JobForm';
 import { SetupSkillsFinder } from './SetupSkillsFinder';
 import { InsightsView } from './InsightsView';
