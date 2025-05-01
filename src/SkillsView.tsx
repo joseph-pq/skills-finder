@@ -87,7 +87,7 @@ function SkillsView({ jobToUpdate, setCurrentView }: SkillsViewProps) {
   };
 
   const handleBack = () => {
-    setCurrentView("jobs");
+    setCurrentView(StorageViewType.Jobs);
   };
 
   const handleCloseDialog = () => {
