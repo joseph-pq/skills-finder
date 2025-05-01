@@ -33,6 +33,7 @@ function useLocalStorage<T>(
 
       setLoading(false);
     } catch (error) {
+      console.error(error); // Log the error for debugging
       setLoading(false);
       setError(true);
     }

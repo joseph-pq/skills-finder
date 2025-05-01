@@ -169,7 +169,7 @@ function SkillsView({ jobToUpdate, setCurrentView }: SkillsViewProps) {
             pageSizeOptions={[10, 20]}
             sx={{ border: 0 }}
             rowSelectionModel={rowSelectionModel}
-            onRowClick={(params) => {
+            onRowClick={(params: { row: { skill: string } }) => {
               if (hoveredSkill === params.row.skill) setHoveredSkill(null);
               else setHoveredSkill(params.row.skill);
             }}

@@ -24,7 +24,7 @@ const JobForm = () => {
     description: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
@@ -32,7 +32,7 @@ const JobForm = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { jobTitle, companyName, description } = formValues;
     addJob({ jobTitle, companyName, description, skills: [] });
@@ -103,7 +103,7 @@ const JobForm = () => {
 };
 
 // Extracted reusable field component
-const JobField = ({ label, ...props }: {label: string} & any) => (
+const JobField = ({ label, ...props }: { label: string; name: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; multiline?: boolean; minRows?: number; maxRows?: number; }) => (
   <FormControl>
     <FormLabel htmlFor={props.name}>{label}</FormLabel>
     <TextField id={props.name} {...props} />

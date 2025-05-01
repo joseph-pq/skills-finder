@@ -34,7 +34,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   const [showProgressBar, setShowProgressBar] = useState<boolean>(false);
 
   // Utility function to pause execution for a given time
-  const sleep = (ms: number) =>
+  const sleep = (ms: number): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
   const goToGroups = () => {
@@ -85,7 +85,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   /**
    * Removes selected job entries from the list.
    */
-  const removeJob = (id: number) => {
+  const removeJob = (id: number): void => {
     const newJobs = jobs.filter((_, index) => index !== id);
     saveJobs(newJobs);
   };
@@ -93,7 +93,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   /**
    * Removes skills from a specific job entry.
    */
-  const clearJob = (id: number) => {
+  const clearJob = (id: number): void => {
     const newJobs = jobs.map((job, index) => {
       if (index === id) {
         return {
@@ -146,7 +146,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   /**
    * Sets the current view to edit skills for selected job entries.
    */
-  const openSkill = (jobIdx: number) => {
+  const openSkill = (jobIdx: number): void => {
     setJobsToUpdate(jobIdx);
     setCurrentView(StorageViewType.Skills);
   };

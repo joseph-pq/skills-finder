@@ -28,7 +28,7 @@ function GroupsView() {
   const { jobs, saveJobs } = context;
   const [groups, setGroups] = React.useState<Group[]>([]);
   const [newName, setNewName] = React.useState("");
-  const joinGroup = (groupIdx: number, newName: string) => {
+  const joinGroup = (groupIdx: number, newName: string): void => {
     // update jobs skills
     const newJobs = [...jobs];
     const group = groups[groupIdx];
