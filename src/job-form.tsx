@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { useState, useContext } from "react";
 
-import { Card } from "./Card";
-import { JobsContext } from "./JobsContext";
+import { Card } from "@/card";
+import { JobsContext } from "@/jobs-context";
 
 const JobForm = () => {
   const context = useContext(JobsContext);

@@ -2,8 +2,8 @@ import { Box, Container } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useContext, useEffect, useState } from "react";
 
-import { JobsContext } from "./JobsContext";
-import { Job } from "./types";
+import { JobsContext } from "@/jobs-context";
+import { Job } from "@/types";
 
 interface ViewColumn {
   field: string;

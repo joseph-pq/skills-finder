@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useLocalStorage } from "./useLocalStorage";
-import { Job } from "../types";
+import { useLocalStorage } from "@/jobs-context/use-local-storage";
+import { Job } from "@/types";
 
 interface JobsContextProps {
   jobs: Job[];

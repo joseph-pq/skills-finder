@@ -13,9 +13,8 @@ import {
 import { useContext } from "react";
 import React from "react";
 
-// import { FormCardContainer } from '../FormCardContainer';
-import { Card } from "../Card";
-import { JobsContext } from "../JobsContext";
+import { Card } from "@/card";
+import { JobsContext } from "@/jobs-context";
 
 function SetupSkillsFinder() {
   const context = useContext(JobsContext);

@@ -13,9 +13,9 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useContext } from "react";
 
-import { CustomPaper } from "./components/CustomPaper";
-import { JobsContext } from "./JobsContext";
-import { StorageViewType } from "./types";
+import { CustomPaper } from "@/components/custom-paper";
+import { JobsContext } from "@/jobs-context";
+import { StorageViewType } from "@/types";
 
 const paginationModel = { page: 0, pageSize: 8 };
 

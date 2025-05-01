@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./SpaceBackground.css";
+import "@/space-background.css";
 
 const Star = ({ x, y }: { x: number; y: number }) => {
   return <div className="star" style={{ top: `${y}%`, left: `${x}%` }}></div>;

@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import React, { useContext } from "react";
 
-import { CustomPaper } from "@/components/CustomPaper";
-import { JobsContext } from "@/JobsContext";
+import { CustomPaper } from "@/components/custom-paper";
+import { JobsContext } from "@/jobs-context";
 
 interface Group {
   skill1: string;

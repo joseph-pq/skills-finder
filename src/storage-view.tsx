@@ -1,10 +1,10 @@
 import { Container, Box } from "@mui/material";
 import React from "react";
 
-import { GroupsView } from "./GroupsView";
-import { JobsView } from "./JobsView";
-import { SkillsView } from "./SkillsView";
-import { StorageViewType } from "./types";
+import { GroupsView } from "@/groups-view";
+import { JobsView } from "@/jobs-view";
+import { SkillsView } from "@/skills-view";
+import { StorageViewType } from "@/types";
 
 
 function StorageView() {
