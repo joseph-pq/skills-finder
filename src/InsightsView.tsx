@@ -1,11 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Box, Container, Typography } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { JobsContext } from './JobsContext';
+import { Box, Container } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import { useContext, useEffect, useState } from "react";
 
-const COLUMNS = [
-  { field: 'skills', headerName: 'Skills', width: 400 },
-  { field: 'count', headerName: 'Count', width: 130 },
+import { JobsContext } from "./JobsContext";
+
+interface ViewColumn {
+  field: string;
+  headerName: string;
+  width: number;
+}
+
+const COLUMNS: ViewColumn[] = [
+  { field: "skills", headerName: "Skills", width: 400 },
+  { field: "count", headerName: "Count", width: 130 },
 ];
 
 const PAGINATION_MODEL = { page: 0, pageSize: 10 };
@@ -13,9 +20,16 @@ const PAGINATION_MODEL = { page: 0, pageSize: 10 };
 const getSkillsData = (jobs) => {
   const skillsCount = jobs
     .flatMap((job) => job.skills.map((skill) => skill.trim())) // Flatten skills array
-    .reduce((acc, skill) => acc.set(skill, (acc.get(skill) || 0) + 1), new Map());
+    .reduce(
+      (acc, skill) => acc.set(skill, (acc.get(skill) || 0) + 1),
+      new Map(),
+    );
 
-  return Array.from(skillsCount, ([skills, count], id) => ({ id, skills, count }));
+  return Array.from(skillsCount, ([skills, count], id) => ({
+    id,
+    skills,
+    count,
+  }));
 };
 
 export function InsightsView() {
@@ -32,7 +46,7 @@ export function InsightsView() {
         <DataGrid
           rows={rows}
           columns={COLUMNS}
-          sortModel={[{ field: 'count', sort: 'desc' }]}
+          sortModel={[{ field: "count", sort: "desc" }]}
           sx={{ border: 0 }}
           initialState={{ pagination: { paginationModel: PAGINATION_MODEL } }}
           pageSizeOptions={[5, 10]}
