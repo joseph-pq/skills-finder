@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./SpaceBackground.css";
 
-const Star = ({ x, y }) => {
+const Star = ({ x, y }: { x: number; y: number }) => {
   return <div className="star" style={{ top: `${y}%`, left: `${x}%` }}></div>;
 };
 
-const generateStars = (numStars) => {
+const generateStars = (numStars: number) => {
   const stars = [];
   for (let i = 0; i < numStars; i++) {
     stars.push({
@@ -17,8 +17,8 @@ const generateStars = (numStars) => {
   return stars;
 };
 
-const Space = ({ children }) => {
-  const [stars, setStars] = useState([]);
+const Space = ({ children }: { children: React.ReactNode }) => {
+  const [stars, setStars] = useState<Array<{ id: number; x: number; y: number; }>>([]);
 
   useEffect(() => {
     setStars(generateStars(100)); // Generate 100 stars

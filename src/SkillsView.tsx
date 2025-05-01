@@ -1,6 +1,4 @@
-import React from "react";
 import {
-  Container,
   Box,
   Typography,
   Button,
@@ -12,24 +10,47 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import { JobsContext } from "./JobsContext";
-import { DataGrid, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
+import React, { useContext } from "react";
+
 import { CustomPaper } from "./components/CustomPaper";
+import { JobsContext } from "./JobsContext";
 
 const paginationModel = { page: 0, pageSize: 8 };
 
 const COLS = [{ field: "skill", headerName: "Skill", width: 200 }];
 
-function SkillsView({ jobToUpdate, setCurrentView }) {
-  const { jobs, saveJobs } = React.useContext(JobsContext);
-  const [hoveredSkill, setHoveredSkill] = React.useState(null);
+interface SkillsViewProps {
+  jobToUpdate: number;
+  setCurrentView: React.Dispatch<React.SetStateAction<string>>;
+}
+
+interface Row {
+  id: number;
+  skill: string;
+  skill_idx: number;
+  job: string;
+  job_idx: number;
+  company: string;
+}
+
+function SkillsView({ jobToUpdate, setCurrentView }: SkillsViewProps) {
+  const context = useContext(JobsContext);
+  if (!context) {
+    throw new Error("ImagesContext must be used within an ImagesProvider");
+  }
+  const { jobs, saveJobs } = context;
+  const [hoveredSkill, setHoveredSkill] = React.useState<string | null>(null);
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const apiRef = useGridApiRef();
-  const [rows, setRows] = React.useState([]);
+  const [rows, setRows] = React.useState<Row[]>([]);
   const [openDialog, setOpenDialog] = React.useState(false); // To manage dialog visibility
   const [selectedSkill, setSelectedSkill] = React.useState(""); // To store selected skill
-  const [selectedSkillIdx, setSelectedSkillIdx] = React.useState(null); // To store selected skill index
-  const [selectedJobIdx, setSelectedJobIdx] = React.useState(null); // To store job index
+  const [selectedSkillIdx, setSelectedSkillIdx] = React.useState<number | null>(
+    null,
+  ); // To store selected skill index
+  const [selectedJobIdx, setSelectedJobIdx] = React.useState<number | null>(
+    null,
+  ); // To store job index
 
   const handleEdit = () => {
     if (rowSelectionModel.length === 1) {
