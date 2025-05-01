@@ -40,6 +40,7 @@ export async function extractSkillsFromDescription(
   description: string,
   apiToken: string,
   currentSkills: string[],
+  model: string = "gemini-2.0-flash",
 ): Promise<ExtractedSkillsData> {
   const ai = new GoogleGenAI({ apiKey: apiToken });
 
@@ -48,7 +49,7 @@ export async function extractSkillsFromDescription(
     .replace("_JOB_DESCRIPTION_", description);
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: model,
     contents: prompt,
     config: {
       responseMimeType: "application/json",
