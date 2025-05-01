@@ -21,14 +21,14 @@ function StorageView() {
             setJobsToUpdate={setJobToUpdate}
           />
         )}
-        {currentView === StorageViewType.Skills && (
+        {currentView === StorageViewType.Skills && jobToUpdate !== null && (
           <SkillsView
             setCurrentView={setCurrentView}
             jobToUpdate={jobToUpdate}
           />
         )}
         {currentView === StorageViewType.Groups && (
-          <GroupsView setCurrentView={setCurrentView} />
+          <GroupsView/>
         )}
       </Box>
     </Container>

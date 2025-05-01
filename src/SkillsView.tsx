@@ -15,6 +15,7 @@ import React, { useContext } from "react";
 
 import { CustomPaper } from "./components/CustomPaper";
 import { JobsContext } from "./JobsContext";
+import { StorageViewType } from "./types";
 
 const paginationModel = { page: 0, pageSize: 8 };
 
@@ -22,7 +23,7 @@ const COLS = [{ field: "skill", headerName: "Skill", width: 200 }];
 
 interface SkillsViewProps {
   jobToUpdate: number;
-  setCurrentView: React.Dispatch<React.SetStateAction<string>>;
+  setCurrentView: React.Dispatch<React.SetStateAction<StorageViewType>>;
 }
 
 interface Row {
