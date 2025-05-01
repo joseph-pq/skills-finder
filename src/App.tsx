@@ -4,12 +4,12 @@ import TabPanel from "@mui/lab/TabPanel";
 import { AppBar, Toolbar, Typography, Box, Tab } from "@mui/material";
 import React, { JSX, useState } from "react";
 
-import { InsightsView } from "./InsightsView";
-import JobForm from "./JobForm";
-import { JobsProvider } from "./JobsContext";
-import { SetupSkillsFinder } from "./SetupSkillsFinder";
-import SpaceBackground from "./Space";
-import { StorageView } from "./StorageView";
+import { InsightsView } from "@/InsightsView";
+import JobForm from "@/JobForm";
+import { JobsProvider } from "@/JobsContext";
+import { SetupSkillsFinder } from "@/SetupSkillsFinder";
+import SpaceBackground from "@/Space";
+import { StorageView } from "@/StorageView";
 
 interface TabItem {
   label: string;

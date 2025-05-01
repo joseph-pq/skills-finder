@@ -7,10 +7,10 @@ import LinearProgress from "@mui/material/LinearProgress";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useContext, useState } from "react";
 
-import { CustomPaper } from "./components/CustomPaper";
-import { JobsContext } from "./JobsContext";
-import { Job } from "./types";
-import { StorageViewType } from "./types";
+import { CustomPaper } from "@/components/CustomPaper";
+import { JobsContext } from "@/JobsContext";
+import { Job } from "@/types";
+import { StorageViewType } from "@/types";
 
 // Define the props for the JobsView component
 interface JobsViewProps {
