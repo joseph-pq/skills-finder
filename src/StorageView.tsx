@@ -4,26 +4,30 @@ import React from "react";
 import { GroupsView } from "./GroupsView";
 import { JobsView } from "./JobsView";
 import { SkillsView } from "./SkillsView";
+import { StorageViewType } from "./types";
+
 
 function StorageView() {
-  const [currentView, setCurrentView] = React.useState<string>("jobs");
-  const [jobToUpdate, setJobToUpdate] = React.useState(null);
+  const [currentView, setCurrentView] = React.useState<StorageViewType>(
+    StorageViewType.Jobs,
+  );
+  const [jobToUpdate, setJobToUpdate] = React.useState<number | null>(null);
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 5 }}>
-        {currentView === "jobs" && (
+        {currentView === StorageViewType.Jobs && (
           <JobsView
             setCurrentView={setCurrentView}
             setJobsToUpdate={setJobToUpdate}
           />
         )}
-        {currentView === "skills" && (
+        {currentView === StorageViewType.Skills && (
           <SkillsView
             setCurrentView={setCurrentView}
             jobToUpdate={jobToUpdate}
           />
         )}
-        {currentView === "groups" && (
+        {currentView === StorageViewType.Groups && (
           <GroupsView setCurrentView={setCurrentView} />
         )}
       </Box>

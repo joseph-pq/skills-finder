@@ -6,6 +6,7 @@ interface Job {
   jobTitle: string;
   companyName: string;
   description: string;
+  skills: string[];
 }
 
 interface JobsContextProps {

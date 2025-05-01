@@ -1,13 +1,15 @@
-import React, { useContext, useState } from "react";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Button, Box } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
-import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { JobsContext } from "./JobsContext";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useContext, useState } from "react";
+
 import { CustomPaper } from "./components/CustomPaper";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
+import { JobsContext } from "./JobsContext";
+import { StorageViewType } from "./types";
 
 // Define the shape of a job object
 interface Job {
@@ -19,7 +21,7 @@ interface Job {
 
 // Define the props for the JobsView component
 interface JobsViewProps {
-  setCurrentView: (view: string) => void;
+  setCurrentView: (view: StorageViewType) => void;
   setJobsToUpdate: (jobIdx: number) => void;
 }
 
@@ -31,16 +33,19 @@ const paginationModel = { page: 0, pageSize: 5 };
  * to manage job entries and extract skills from job descriptions.
  */
 function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
-  const { jobs, saveJobs, apiToken } = useContext(JobsContext);
-  const apiRef = useGridApiRef();
-  const [rowSelectionModel, setRowSelectionModel] = useState<number[]>([]);
+  const context = useContext(JobsContext);
+  if (!context) {
+    throw new Error("ImagesContext must be used within an ImagesProvider");
+  }
+  const { jobs, saveJobs, apiToken } = context;
   const [showProgressBar, setShowProgressBar] = useState<boolean>(false);
 
   // Utility function to pause execution for a given time
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
   const goToGroups = () => {
-    setCurrentView("groups");
+    setCurrentView(StorageViewType.Groups);
   };
 
   /**
@@ -150,7 +155,7 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
    */
   const openSkill = (jobIdx: number) => {
     setJobsToUpdate(jobIdx);
-    setCurrentView("skills");
+    setCurrentView(StorageViewType.Skills);
   };
 
   // Prepare rows for the data grid
