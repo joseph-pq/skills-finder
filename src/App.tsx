@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Box, Tab } from '@mui/material';
-import { JobsProvider } from './JobsContext';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
+import React, { JSX, useState } from "react";
+import { AppBar, Toolbar, Typography, Box, Tab } from "@mui/material";
+import { JobsProvider } from "./JobsContext";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 
-import SpaceBackground from './Space';
-import JobForm from './JobForm';
-import { SetupSkillsFinder } from './SetupSkillsFinder';
-import { InsightsView } from './InsightsView';
-import { StorageView } from './StorageView';
+import SpaceBackground from "./Space";
+import JobForm from "./JobForm";
+import { SetupSkillsFinder } from "./SetupSkillsFinder";
+import { InsightsView } from "./InsightsView";
+import { StorageView } from "./StorageView";
 
 interface TabItem {
   label: string;
@@ -18,16 +18,17 @@ interface TabItem {
 }
 
 const TABS: TabItem[] = [
-  { label: 'Home', value: '1', component: <SetupSkillsFinder /> },
-  { label: 'New Job', value: '2', component: <JobForm /> },
-  { label: 'Current Jobs', value: '3', component: <StorageView /> },
-  { label: 'Insights', value: '4', component: <InsightsView /> },
+  { label: "Home", value: "1", component: <SetupSkillsFinder /> },
+  { label: "New Job", value: "2", component: <JobForm /> },
+  { label: "Current Jobs", value: "3", component: <StorageView /> },
+  { label: "Insights", value: "4", component: <InsightsView /> },
 ];
 
 function App() {
-  const [currentTab, setCurrentTab] = useState<string>('1');
+  const [currentTab, setCurrentTab] = useState<string>("1");
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: string) => setCurrentTab(newValue);
+  const handleTabChange = (_: React.SyntheticEvent, newValue: string) =>
+    setCurrentTab(newValue);
 
   return (
     <JobsProvider>
@@ -40,8 +41,18 @@ function App() {
           </Toolbar>
         </AppBar>
         <TabContext value={currentTab}>
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
-            <TabList onChange={handleTabChange} aria-label="App navigation tabs">
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <TabList
+              onChange={handleTabChange}
+              aria-label="App navigation tabs"
+            >
               {TABS.map(({ label, value }) => (
                 <Tab key={value} label={label} value={value} />
               ))}
