@@ -1,14 +1,27 @@
-import React, { useState, useContext } from 'react';
-import { Button, FormLabel, TextField, Typography, FormControl, Box, Container } from '@mui/material';
-import { JobsContext } from './JobsContext';
-import { Card } from './Card';
+import {
+  Button,
+  FormLabel,
+  TextField,
+  Typography,
+  FormControl,
+  Box,
+  Container,
+} from "@mui/material";
+import { useState, useContext } from "react";
+
+import { Card } from "./Card";
+import { JobsContext } from "./JobsContext";
 
 const JobForm = () => {
-  const { addJob } = useContext(JobsContext);
+  const context = useContext(JobsContext);
+  if (!context) {
+    throw new Error("ImagesContext must be used within an ImagesProvider");
+  }
+  const { addJob } = context
   const [formValues, setFormValues] = useState({
-    jobTitle: '',
-    companyName: '',
-    description: '',
+    jobTitle: "",
+    companyName: "",
+    description: "",
   });
 
   const handleChange = (e) => {
@@ -26,9 +39,9 @@ const JobForm = () => {
 
     // Clear form values after submission
     setFormValues({
-      jobTitle: '',
-      companyName: '',
-      description: '',
+      jobTitle: "",
+      companyName: "",
+      description: "",
     });
   };
 
@@ -39,12 +52,22 @@ const JobForm = () => {
           <Typography
             component="h1"
             variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
             Add a Job Posting
           </Typography>
 
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              gap: 2,
+            }}
+          >
             <JobField
               label="Job Title"
               name="jobTitle"
@@ -80,7 +103,7 @@ const JobForm = () => {
 };
 
 // Extracted reusable field component
-const JobField = ({ label, ...props }) => (
+const JobField = ({ label, ...props }: {label: string} & any) => (
   <FormControl>
     <FormLabel htmlFor={props.name}>{label}</FormLabel>
     <TextField id={props.name} {...props} />

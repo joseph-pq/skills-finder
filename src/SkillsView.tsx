@@ -123,7 +123,7 @@ function SkillsView({ jobToUpdate, setCurrentView }: SkillsViewProps) {
       });
     }
     setRows(newRows);
-  }, [jobs]);
+  }, [jobs, jobToUpdate]);
 
   const jobDescription = jobs[jobToUpdate]?.description || "";
 

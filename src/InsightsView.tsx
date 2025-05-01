@@ -3,6 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useContext, useEffect, useState } from "react";
 
 import { JobsContext } from "./JobsContext";
+import { Job } from "./types";
 
 interface ViewColumn {
   field: string;
@@ -17,9 +18,9 @@ const COLUMNS: ViewColumn[] = [
 
 const PAGINATION_MODEL = { page: 0, pageSize: 10 };
 
-const getSkillsData = (jobs) => {
+const getSkillsData = (jobs: Job[]) => {
   const skillsCount = jobs
-    .flatMap((job) => job.skills.map((skill) => skill.trim())) // Flatten skills array
+    .flatMap((job) => job.skills.map((skill: string) => skill.trim())) // Flatten skills array
     .reduce(
       (acc, skill) => acc.set(skill, (acc.get(skill) || 0) + 1),
       new Map(),
@@ -33,8 +34,14 @@ const getSkillsData = (jobs) => {
 };
 
 export function InsightsView() {
-  const { jobs } = useContext(JobsContext);
-  const [rows, setRows] = useState([]);
+  const context = useContext(JobsContext);
+  if (!context) {
+    throw new Error("ImagesContext must be used within an ImagesProvider");
+  }
+  const { jobs } = context;
+  const [rows, setRows] = useState<
+    Array<{ id: number; skills: string; count: number }>
+  >([]);
 
   useEffect(() => {
     setRows(getSkillsData(jobs));

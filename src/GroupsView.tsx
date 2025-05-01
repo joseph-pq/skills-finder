@@ -1,37 +1,45 @@
-import React, { useContext, useEffect, useState } from "react";
-import { JobsContext } from "./JobsContext";
 import {
-  Container,
   Box,
   Typography,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   TextField,
   Card,
   CardContent,
   FormControl,
 } from "@mui/material";
-import { CustomPaper } from "./components/CustomPaper";
+import React, { useContext } from "react";
 
-function GroupsView({ setCurrentView }) {
-  const { jobs, saveJobs } = useContext(JobsContext);
-  const [groups, setGroups] = React.useState([]);
+import { CustomPaper } from "./components/CustomPaper";
+import { JobsContext } from "./JobsContext";
+
+interface Group {
+  skill1: string;
+  skill2: string;
+  jobIdxs1: number[];
+  jobIdxs2: number[];
+  ignore: boolean;
+}
+
+function GroupsView() {
+  const context = useContext(JobsContext);
+  if (!context) {
+    throw new Error("ImagesContext must be used within an ImagesProvider");
+  }
+  const { jobs, saveJobs } = context;
+  const [groups, setGroups] = React.useState<Group[]>([]);
   const [newName, setNewName] = React.useState("");
-  const joinGroup = (groupIdx, newName) => {
+  const joinGroup = (groupIdx: number, newName: string) => {
     // update jobs skills
     const newJobs = [...jobs];
     const group = groups[groupIdx];
-    group.jobIdxs1.forEach((jobIdx) => {
+    group.jobIdxs1.forEach((jobIdx: number) => {
       newJobs[jobIdx].skills = newJobs[jobIdx].skills.map((skill) =>
-        skill.replace(group.skill1, newName)
+        skill.replace(group.skill1, newName),
       );
     });
     group.jobIdxs2.forEach((jobIdx) => {
       newJobs[jobIdx].skills = newJobs[jobIdx].skills.map((skill) =>
-        skill.replace(group.skill2, newName)
+        skill.replace(group.skill2, newName),
       );
     });
     saveJobs(newJobs);
@@ -69,7 +77,7 @@ function GroupsView({ setCurrentView }) {
       }
     }
     setGroups(groups);
-  }, []);
+  }, [jobs]);
   const [groupIdx, setGroupIdx] = React.useState(0);
   return (
     <CustomPaper>
@@ -101,7 +109,8 @@ function GroupsView({ setCurrentView }) {
             setGroups(newGroups);
             // previous not ignored
             for (let i = 1; i < groups.length; i++) {
-              const newGroupIdx = (groupIdx + groups.length - i) % groups.length;
+              const newGroupIdx =
+                (groupIdx + groups.length - i) % groups.length;
               if (!groups[newGroupIdx].ignore) {
                 setGroupIdx(newGroupIdx);
                 return;
