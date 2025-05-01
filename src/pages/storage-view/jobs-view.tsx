@@ -9,7 +9,7 @@ import { useContext, useState } from "react";
 import { CustomPaper } from "@/components/custom-paper";
 import { extractSkillsFromDescription } from "@/features/llm/api/extract-skills";
 import { JobsContext } from "@/jobs-context";
-import { Job, StorageViewType } from "@/types";
+import { StorageViewType, Table, Job, Skill, JobSkill } from "@/types";
 import { sleep } from "@/utils";
 
 // Define the props for the JobsView component
@@ -30,8 +30,18 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   if (!context) {
     throw new Error("JobsContext must be used within an JobsProvider");
   }
-  const { jobs, saveJobs, skills, apiToken, getSkills, addSkillsToJob, removeAllSkillsFromJob } =
-    context;
+  const {
+    jobs,
+    saveJobs,
+    saveJobSkills,
+    saveSkills,
+    skills,
+    apiToken,
+    getSkills,
+    addSkillsToJob,
+    removeAllSkillsFromJob,
+    jobSkills,
+  } = context;
   const [showProgressBar, setShowProgressBar] = useState<boolean>(false);
 
   /**
@@ -78,25 +88,31 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
    * Imports job entries from a JSON file.
    */
   const importJobs = () => {
-    // const input = document.createElement("input");
-    // input.type = "file";
-    // input.accept = ".json";
-    // input.onchange = (event: Event) => {
-    //   const file = (event.target as HTMLInputElement).files?.[0];
-    //   if (file) {
-    //     const reader = new FileReader();
-    //     reader.onload = () => {
-    //       try {
-    //         const importedJobs: Job[] = JSON.parse(reader.result as string);
-    //         saveJobs(importedJobs);
-    //       } catch (error) {
-    //         console.error("Error parsing JSON file:", error);
-    //       }
-    //     };
-    //     reader.readAsText(file);
-    //   }
-    // };
-    // input.click();
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (event: Event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const importedData: {
+              jobs: Table<Job>;
+              skills: Table<Skill>;
+              jobSkills: Table<JobSkill>;
+            } = JSON.parse(reader.result as string);
+            saveJobs(importedData.jobs);
+            saveSkills(importedData.skills);
+            saveJobSkills(importedData.jobSkills);
+          } catch (error) {
+            console.error("Error parsing JSON file:", error);
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
   };
 
   /**
@@ -104,7 +120,9 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
    */
   const exportJobs = () => {
     const element = document.createElement("a");
-    const file = new Blob([JSON.stringify(jobs)], { type: "application/json" });
+    const file = new Blob([JSON.stringify({ jobs, skills, jobSkills })], {
+      type: "application/json",
+    });
     element.href = URL.createObjectURL(file);
     element.download = "jobs.json";
     document.body.appendChild(element);
@@ -124,7 +142,9 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
     id: index,
     title: job.title,
     company: job.company,
-    skills: getSkills(job.id).map((skill) => skill.name).join(", "),
+    skills: getSkills(job.id)
+      .map((skill) => skill.name)
+      .join(", "),
   }));
 
   // Define columns for the data grid
@@ -157,7 +177,11 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
             <DeleteOutlineIcon />
           </Button>
           {/* <Button onClick={() => clearJob(params.id as number)}> */}
-          <Button onClick={() => removeAllSkillsFromJob(jobs.data[params.id as number].id)}>
+          <Button
+            onClick={() =>
+              removeAllSkillsFromJob(jobs.data[params.id as number].id)
+            }
+          >
             <CleaningServicesIcon />
           </Button>
         </Box>
