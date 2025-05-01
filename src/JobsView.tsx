@@ -158,7 +158,6 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
     company: job.companyName,
     skills: job.skills,
   }));
-  console.log(rows);
 
   // Define columns for the data grid
   const columns: GridColDef[] = [
