@@ -50,6 +50,8 @@ function ChatBotview() {
         display: "flex",
         flexDirection: "column",
         height: "70vh",
+        width: "80%",
+        margin: 'auto',
         border: "1px solid #ccc",
         borderRadius: "8px",
         overflow: "hidden",
