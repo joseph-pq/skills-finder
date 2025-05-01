@@ -37,6 +37,7 @@ const RESPONSE_SCHEMA = {
 };
 
 export async function extractSkillsFromDescription(
+  title: string,
   description: string,
   apiToken: string,
   currentSkills: string[],
@@ -46,6 +47,7 @@ export async function extractSkillsFromDescription(
 
   const prompt = extract_skill_template
     .replace("_SKILLS_", currentSkills.join(", "))
+    .replace("_JOB_TITLE_", title)
     .replace("_JOB_DESCRIPTION_", description);
 
   const response = await ai.models.generateContent({
@@ -57,5 +59,8 @@ export async function extractSkillsFromDescription(
     },
   });
 
-  return JSON.parse(response.text as string) as ExtractedSkillsData;
+
+  const parsedResponse =  JSON.parse(response.text as string) as ExtractedSkillsData;
+  console.log("AI response:", parsedResponse);
+  return parsedResponse;
 }

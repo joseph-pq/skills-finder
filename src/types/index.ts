@@ -4,9 +4,34 @@ export enum StorageViewType {
   Groups = "groups",
 }
 
+export enum Seniority {
+	intern = "intern",
+	junior = "junior",
+	mid = "mid",
+	senior = "senior",
+}
+
 export interface Job {
-  jobTitle: string;
-  companyName: string;
+  id: number;
+  title: string;
+  company: string;
+  seniority: Seniority | null;
   description: string;
-  skills: string[];
+}
+
+export interface Skill {
+  id: number;
+  name: string;
+}
+
+export interface JobSkill {
+  id: number;
+  jobId: number;
+  skillId: number;
+  years: number | null;
+}
+
+export interface Table<T> {
+  max_id: number;
+  data: T[];
 }

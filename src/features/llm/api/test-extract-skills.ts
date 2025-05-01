@@ -17,6 +17,7 @@ async function main() {
 
   try {
     const result = await extractSkillsFromDescription(
+      "mid-level frontend developer",
       jobDescription,
       apiToken,
       currentSkills,

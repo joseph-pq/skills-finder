@@ -19,7 +19,7 @@ import { JobsContext } from "@/jobs-context";
 function SetupSkillsFinder() {
   const context = useContext(JobsContext);
   if (!context) {
-    throw new Error("ImagesContext must be used within an ImagesProvider");
+    throw new Error("JobsContext must be used within an JobsProvider");
   }
   const { apiToken, saveApiToken } = context;
   const [localApiToken, setLocalApiToken] = React.useState("");

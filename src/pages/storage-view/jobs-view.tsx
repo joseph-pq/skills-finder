@@ -10,6 +10,7 @@ import { CustomPaper } from "@/components/custom-paper";
 import { extractSkillsFromDescription } from "@/features/llm/api/extract-skills";
 import { JobsContext } from "@/jobs-context";
 import { Job, StorageViewType } from "@/types";
+import { sleep } from "@/utils";
 
 // Define the props for the JobsView component
 interface JobsViewProps {
@@ -27,97 +28,75 @@ const paginationModel = { page: 0, pageSize: 5 };
 function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   const context = useContext(JobsContext);
   if (!context) {
-    throw new Error("ImagesContext must be used within an ImagesProvider");
+    throw new Error("JobsContext must be used within an JobsProvider");
   }
-  const { jobs, saveJobs, apiToken } = context;
+  const { jobs, saveJobs, skills, apiToken, getSkills, addSkillsToJob, removeAllSkillsFromJob } =
+    context;
   const [showProgressBar, setShowProgressBar] = useState<boolean>(false);
-
-  // Utility function to pause execution for a given time
-  const sleep = (ms: number): Promise<void> =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  const goToGroups = () => {
-    setCurrentView(StorageViewType.Groups);
-  };
 
   /**
    * Extracts skills from job descriptions using Google Generative AI.
    * Updates the job entries with the extracted skills.
    */
   const extractSkills = async () => {
-    const jobsCopy = [...jobs];
-    let updated = false;
+    const jobsCopy = [...jobs.data];
     setShowProgressBar(true);
+    const currentSkills = skills.data.map((skill) => skill.name);
 
-    for (let i = 0; i < jobs.length; i++) {
-      if (!jobs[i].skills || jobs[i].skills.length === 0) {
+    for (let i = 0; i < jobs.data.length; i++) {
+      const skills = getSkills(jobs.data[i].id);
+      if (!skills || skills.length === 0) {
         console.log("Skills not found");
-        const skills = await extractSkillsFromDescription(
-          jobs[i].description,
+        const skillsData = await extractSkillsFromDescription(
+          jobs.data[i].title,
+          jobs.data[i].description,
           apiToken,
+          currentSkills,
         );
-        jobsCopy[i].skills = skills;
-        updated = true;
+        addSkillsToJob(jobsCopy[i].id, skillsData);
         await sleep(1000);
       } else {
         console.log("Skills found");
-        console.log(jobs[i].skills);
+        console.log(skills);
       }
     }
-
     setShowProgressBar(false);
-    if (updated) {
-      saveJobs(jobsCopy);
-    }
   };
 
   /**
    * Removes selected job entries from the list.
    */
   const removeJob = (id: number): void => {
-    const newJobs = jobs.filter((_, index) => index !== id);
-    saveJobs(newJobs);
-  };
-
-  /**
-   * Removes skills from a specific job entry.
-   */
-  const clearJob = (id: number): void => {
-    const newJobs = jobs.map((job, index) => {
-      if (index === id) {
-        return {
-          ...job,
-          skills: [],
-        };
-      }
-      return job;
+    const newJobsData = jobs.data.filter((_, index) => index !== id);
+    saveJobs({
+      ...jobs,
+      data: newJobsData,
     });
-    saveJobs(newJobs);
   };
 
   /**
    * Imports job entries from a JSON file.
    */
   const importJobs = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-    input.onchange = (event: Event) => {
-      const file = (event.target as HTMLInputElement).files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          try {
-            const importedJobs: Job[] = JSON.parse(reader.result as string);
-            saveJobs(importedJobs);
-          } catch (error) {
-            console.error("Error parsing JSON file:", error);
-          }
-        };
-        reader.readAsText(file);
-      }
-    };
-    input.click();
+    // const input = document.createElement("input");
+    // input.type = "file";
+    // input.accept = ".json";
+    // input.onchange = (event: Event) => {
+    //   const file = (event.target as HTMLInputElement).files?.[0];
+    //   if (file) {
+    //     const reader = new FileReader();
+    //     reader.onload = () => {
+    //       try {
+    //         const importedJobs: Job[] = JSON.parse(reader.result as string);
+    //         saveJobs(importedJobs);
+    //       } catch (error) {
+    //         console.error("Error parsing JSON file:", error);
+    //       }
+    //     };
+    //     reader.readAsText(file);
+    //   }
+    // };
+    // input.click();
   };
 
   /**
@@ -141,11 +120,11 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
   };
 
   // Prepare rows for the data grid
-  const rows = jobs.map((job, index) => ({
+  const rows = jobs.data.map((job, index) => ({
     id: index,
-    title: job.jobTitle,
-    company: job.companyName,
-    skills: job.skills,
+    title: job.title,
+    company: job.company,
+    skills: getSkills(job.id).map((skill) => skill.name).join(", "),
   }));
 
   // Define columns for the data grid
@@ -177,7 +156,8 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
           <Button onClick={() => removeJob(params.id as number)}>
             <DeleteOutlineIcon />
           </Button>
-          <Button onClick={() => clearJob(params.id as number)}>
+          {/* <Button onClick={() => clearJob(params.id as number)}> */}
+          <Button onClick={() => removeAllSkillsFromJob(jobs.data[params.id as number].id)}>
             <CleaningServicesIcon />
           </Button>
         </Box>
@@ -211,7 +191,11 @@ function JobsView({ setCurrentView, setJobsToUpdate }: JobsViewProps) {
         <Button type="submit" variant="outlined" onClick={extractSkills}>
           Extract Skills
         </Button>
-        <Button type="submit" variant="outlined" onClick={goToGroups}>
+        <Button
+          type="submit"
+          variant="outlined"
+          onClick={() => setCurrentView(StorageViewType.Groups)}
+        >
           Groups
         </Button>
       </Box>

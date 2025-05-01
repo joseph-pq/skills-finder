@@ -14,6 +14,7 @@ From the given job description, extract the seniority of the job (junior, mid_le
 Parse the response into a valid JSON:
 
 EXAMPLE:
+Job title: senior python developer
 Job description:
 \`\`\`
 We required a senior python developer with 3 or more experience in machine learning and large language models
@@ -40,6 +41,7 @@ Response:
 \`\`\`
 
 EXAMPLE:
+Job title: software engineer
 Job description:
 \`\`\`
 This job is looking for a software engineer with the following requirements:
@@ -68,6 +70,7 @@ Response:
 \`\`\`
 
 EXAMPLE:
+Job title: software developer
 Job description:
 \`\`\`
 Requirements:
@@ -108,6 +111,7 @@ Response:
 \`\`\`
 
 TARGET:
+Job title: _JOB_TITLE_
 Job description:
 \`\`\`
 _JOB_DESCRIPTION_

@@ -1,9 +1,4 @@
-export enum Seniority {
-	intern = "intern",
-	junior = "junior",
-	mid = "mid",
-	senior = "senior",
-}
+import { Seniority } from '@/types';
 
 export interface ExtractedSkillsData {
 	seniority: Seniority | null;

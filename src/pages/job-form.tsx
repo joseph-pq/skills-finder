@@ -35,7 +35,13 @@ const JobForm = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { jobTitle, companyName, description } = formValues;
-    addJob({ jobTitle, companyName, description, skills: [] });
+    addJob({
+      id: 0, // Placeholder ID, will be replaced in addJob function
+      title: jobTitle,
+      company: companyName,
+      seniority: null,
+      description,
+    });
 
     // Clear form values after submission
     setFormValues({
