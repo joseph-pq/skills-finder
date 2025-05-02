@@ -6,7 +6,7 @@ import React, { JSX, useState } from "react";
 
 import SpaceBackground from "@/app/space";
 import { JobsProvider } from "@/jobs-context";
-// import { InsightsView } from "@/pages/insights-view";
+import { InsightsView } from "@/pages/insights-view";
 import { ChatBotview } from "@/pages/chatbot-view";
 import JobForm from "@/pages/job-form";
 import { SetupSkillsFinder } from "@/pages/setup-skills-finder";
@@ -23,7 +23,7 @@ const TABS: TabItem[] = [
   { label: "New Job", value: "2", component: <JobForm /> },
   { label: "Current Jobs", value: "3", component: <StorageView /> },
   { label: "Chatbot", value: "4", component: <ChatBotview /> },
-  // { label: "Insights", value: "4", component: <InsightsView /> },
+  { label: "Insights", value: "5", component: <InsightsView /> },
 ];
 
 function App() {

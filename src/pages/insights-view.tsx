@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useContext, useEffect, useState } from "react";
 
 import { JobsContext } from "@/jobs-context";
-import { Job } from "@/types";
+import { Job, JobSkill, Skill, Table } from "@/types";
 
 interface ViewColumn {
   field: string;
@@ -18,13 +18,21 @@ const COLUMNS: ViewColumn[] = [
 
 const PAGINATION_MODEL = { page: 0, pageSize: 10 };
 
-const getSkillsData = (jobs: Job[]) => {
-  const skillsCount = jobs
-    .flatMap((job) => (job.skills || []).map((skill: string) => skill.trim())) // Flatten skills array, handle missing skills
-    .reduce(
-      (acc, skill) => acc.set(skill, (acc.get(skill) || 0) + 1),
-      new Map(),
-    );
+const getSkillsData = (
+  jobs: Table<Job>,
+  jobSkills: Table<JobSkill>,
+  skills: Table<Skill>,
+) => {
+  const skillsCount = jobSkills.data.reduce(
+    (acc, jobSkill) => {
+      const skill = skills.data.find((s) => s.id === jobSkill.skillId);
+      if (skill) {
+        acc.set(skill.name, (acc.get(skill.name) || 0) + 1);
+      }
+      return acc;
+    },
+    new Map<string, number>(),
+  );
 
   return Array.from(skillsCount, ([skills, count], id) => ({
     id,
@@ -36,16 +44,19 @@ const getSkillsData = (jobs: Job[]) => {
 export function InsightsView() {
   const context = useContext(JobsContext);
   if (!context) {
-    throw new Error("ImagesContext must be used within an ImagesProvider");
+    throw new Error("JobsContext must be used within a JobsProvider");
   }
-  const { jobs } = context;
+  const { jobs, jobSkills, skills } = context;
   const [rows, setRows] = useState<
     Array<{ id: number; skills: string; count: number }>
   >([]);
 
   useEffect(() => {
-    setRows(getSkillsData(jobs));
-  }, [jobs]);
+    // Ensure all data is loaded before processing
+    if (!context.loadingJobs && !context.loadingJobSkills && !context.loadingSkills) {
+      setRows(getSkillsData(jobs, jobSkills, skills));
+    }
+  }, [jobs, jobSkills, skills, context.loadingJobs, context.loadingJobSkills, context.loadingSkills]);
 
   return (
     <Container maxWidth="sm">
