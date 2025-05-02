@@ -6,8 +6,8 @@ import React, { JSX, useState } from "react";
 
 import SpaceBackground from "@/app/space";
 import { JobsProvider } from "@/jobs-context";
-import { InsightsView } from "@/pages/insights-view";
 import { ChatBotview } from "@/pages/chatbot-view";
+import { InsightsView } from "@/pages/insights-view";
 import JobForm from "@/pages/job-form";
 import { SetupSkillsFinder } from "@/pages/setup-skills-finder";
 import { StorageView } from "@/pages/storage-view";
