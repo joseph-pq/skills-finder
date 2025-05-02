@@ -1,4 +1,4 @@
-import { GoogleGenAI, FunctionCallingConfigMode } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 import { chatbotSystemPrompt } from "@/features/llm/utils/format-prompts";
 import {
@@ -8,13 +8,13 @@ import {
 } from "@/features/llm/utils/function-calls";
 import { Job, JobSkill, Skill } from "@/types";
 
-type GroupedResult = { key: string | number; size: number };
+type GroupedResult = { key: string | number; count: number };
 
 /**
- * Groups a list of objects by a specified key and returns a new list with objects: {key: `key`, size: `size`}
+ * Groups a list of objects by a specified key and returns a new list with objects: {key: `key`, count: `count`}
  * @param list The list of objects to group.
  * @param key The key to group by.
- * @returns A new list of objects with the key and size properties.
+ * @returns A new list of objects with the key and count properties.
  */
 const groupByFunction = <T extends Record<string, string | number>>(
   list: T[],
@@ -26,7 +26,7 @@ const groupByFunction = <T extends Record<string, string | number>>(
       if (!acc[keyValue]) {
         acc[keyValue] = { [keyName]: keyValue, count: 0 };
       }
-      acc[keyValue].size += 1;
+      acc[keyValue].count += 1;
       return acc;
     },
     {} as Record<string, GroupedResult>,
@@ -83,7 +83,7 @@ export const getChatResponse = async (
 
     const contents = [{ role: "user", parts: [{ text: message }] }];
 
-    const maxIterations = 7;
+    const maxIterations = 10;
     const currentListNames = ["jobs", "skills", "jobSkills"];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const totalLists: Record<string, any[]> = {
@@ -121,7 +121,7 @@ export const getChatResponse = async (
           const functionArgs = functionCall.args;
           console.log("Function call:", functionName, functionArgs);
           contents.push({
-            role: "assistant",
+            role: "model",
             parts: [
               {
                 text:
@@ -258,7 +258,39 @@ export const getChatResponse = async (
           return "Invalid function call.";
         }
       } else {
-        return response.text as string;
+        const response_text =  response.text || "";
+        // check if function call names are in the response
+        const functionCallNames = [
+          getRegistries.name,
+          groupBy.name,
+          joinLists.name,
+        ];
+        const isFunctionCall = functionCallNames.some((name) =>
+          response_text.includes(name),
+        );
+        if (isFunctionCall) {
+          contents.push({
+            role: "model",
+            parts: [
+              {
+                text: response_text,
+              },
+            ],
+          });
+          contents.push({
+            role: "user",
+            parts: [
+              {
+                text: `The response text contains a function call. Please provide a valid function call.`,
+              },
+            ],
+          });
+          continue;
+        } else {
+          return response_text;
+        }
+
+
       }
     }
     return "Sorry, I couldn't process your request.";
