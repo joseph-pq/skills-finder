@@ -21,7 +21,7 @@ function ChatBotview() {
   if (!context) {
     throw new Error("JobsContext must be used within an JobsProvider");
   }
-  const { apiToken } = context;
+  const { apiToken, jobs, skills, jobSkills } = context;
 
   const handleSendMessage = async () => {
     if (message.trim() !== "") {
@@ -30,7 +30,13 @@ function ChatBotview() {
       setMessage("");
 
       // Get bot response from AI
-      const botResponse = await getChatResponse(userMessage, apiToken);
+      const botResponse = await getChatResponse(
+        userMessage,
+        apiToken,
+        jobs.data,
+        skills.data,
+        jobSkills.data,
+      );
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: botResponse, sender: "bot" },

@@ -88,7 +88,7 @@ function JobsProvider({ children }: { children: React.ReactNode }) {
   };
 
   // get skills by job id
-  const getSkills = (jobId: number) => {
+  const getSkills = (jobId: number): Skill[] => {
     const jobSkillsForJob = jobSkills.data.filter(
       (jobSkill) => jobSkill.jobId === jobId,
     );
